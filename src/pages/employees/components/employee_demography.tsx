@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import type { EmployeeData } from "../EmployeeProfile";
+import type { EmployeeData } from "../employee-profile";
 import {
   Card,
   CardHeader,

@@ -14,8 +14,8 @@ import {
 } from "../../components/ui/card";
 import { ScrollArea } from "../../components/ui/scroll-area";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { EmployeeDemography } from "./components/EmployeeDemography";
-import { EmployeeLeaves } from "./components/LeavesTab";
+import { EmployeeDemography } from "./components/employee_demography";
+import { EmployeeLeaves } from "./components/leaves_tab";
 import { Pencil } from "lucide-react";
 import { Button } from "../../components/ui/button";
 

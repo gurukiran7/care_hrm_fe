@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { DayPicker } from "react-day-picker";
@@ -58,6 +56,7 @@ function Calendar({
           return <ChevronRightIcon {...props} />;
         },
       }}
+      {...props}
     />
   );
 }

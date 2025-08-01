@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useNavigate } from "raviger";
+
 
 import { columns, type Employee } from "./components/columns";
 import {
@@ -43,7 +42,6 @@ const employeeStatuses = Array.from(
   }));
 
 export function Employees() {
-  const navigate = useNavigate();
 
   return (
     <div className="p-4 container mx-auto">

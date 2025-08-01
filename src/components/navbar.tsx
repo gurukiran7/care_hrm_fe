@@ -5,11 +5,15 @@ import { hrRoutes } from "./nav-options";
 import { Button } from "./ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { User } from "lucide-react";
-
-const user = { role: "employee" }; 
+import { useAtomValue } from "jotai/react";
+import { authUserAtom } from "../state/user-atom";
+import { getHRMPermissions, hasPermission } from "../common/Permissions";
 
 export default function Navbar() {
   const pathname = usePath();
+  const user = useAtomValue(authUserAtom);
+  const permissions = user?.permissions ?? [];
+  const hrmPermissions = getHRMPermissions(hasPermission, permissions);
   const routes = hrRoutes;
 
   return (
@@ -21,43 +25,43 @@ export default function Navbar() {
           </h1>
         </Link>
       </div>
-      {user.role === "hr" ? (
-      <div className="hidden md:flex items-center gap-2">
-        <div className="flex flex-row gap-x-6 mr-8">
-          {routes.map((route) => {
-            const isActive = pathname === route.href;
-            return (
-              <Link href={route.href} key={route.href}>
-                <div
-                  className={cn(
-                    "flex items-center space-x-1 py-2 px-3 rounded-md transition-colors",
-                    isActive
-                      ? "text-[#111827] font-medium"
-                      : "text-[#111827]/70 hover:text-primary hover:bg-primary/5"
-                  )}
-                >
-                  <route.icon className="h-5 w-5" />
-                  <span className="font-bold text-lg cursor-pointer">
-                    {route.label}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+      {hrmPermissions.canViewHRDashboard ? (
+        <div className="hidden md:flex items-center gap-2">
+          <div className="flex flex-row gap-x-6 mr-8">
+            {routes.map((route) => {
+              const isActive = pathname === route.href;
+              return (
+                <Link href={route.href} key={route.href}>
+                  <div
+                    className={cn(
+                      "flex items-center space-x-1 py-2 px-3 rounded-md transition-colors",
+                      isActive
+                        ? "text-[#111827] font-medium"
+                        : "text-[#111827]/70 hover:text-primary hover:bg-primary/5"
+                    )}
+                  >
+                    <route.icon className="h-5 w-5" />
+                    <span className="font-bold text-lg cursor-pointer">
+                      {route.label}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+            <Button className="rounded-full bg-[#111827] text-[#F8FAFC] hover:bg-[#111827]/90 flex items-center gap-2">
+              <PlusIcon className="h-5 w-5" />
+              create employee
+            </Button>
         </div>
-        <Button className="rounded-full bg-[#111827] text-[#F8FAFC] hover:bg-[#111827]/90 flex items-center gap-2">
-          <PlusIcon className="h-5 w-5" />
-          create employee
-        </Button>
-      </div>
-      ):(
+      ) : hrmPermissions.canViewEmployeeDashboard ? (
         <div className="ml-auto flex items-center">
           <Link href="/profile">
             <Button
               variant="ghost"
               className={cn(
                 "flex items-center space-x-1 py-2 px-3 rounded-md transition-colors",
-                pathname==="/profile"
+                pathname === "/profile"
                   ? "text-[#111827] font-medium"
                   : "text-[#111827]/70 hover:text-primary hover:bg-primary/5"
               )}
@@ -67,8 +71,7 @@ export default function Navbar() {
             </Button>
           </Link>
         </div>
-
-      )}
+      ) : null}
       <MobileNavbar />
     </nav>
   );

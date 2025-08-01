@@ -100,9 +100,6 @@ const employeeData: EmployeeData = {
 export function EmployeeProfile() {
   const employee = employeeData;
 
-  const handleEditClick = () => {
-    alert("Edit Profile clicked");
-  };
   const handleDeleteClick = () => {
     alert("Delete Profile clicked");
   };

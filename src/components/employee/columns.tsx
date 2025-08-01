@@ -1,5 +1,5 @@
 import { Button } from "../../components/ui/button";
-import { Dot, Edit, MoreHorizontal, Pencil } from "lucide-react";
+import { Dot, Pencil } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../ui/badge";
 
@@ -51,7 +51,7 @@ export const columns: ColumnDef<LeaveActivityRow>[] = [
     id: "actions",
     header: "",
     cell: () => (
-      <Button variant="secondary" className="p-2 gap-1 flex">
+      <Button variant="secondary" className="p-2 gap-1 flex bg-[#F1F5F9]">
         Edit <Pencil className="h-3 w-3" />
       </Button>
     ),

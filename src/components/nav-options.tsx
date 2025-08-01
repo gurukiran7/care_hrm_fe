@@ -1,5 +1,5 @@
 
-import { DashboardIcon, PersonIcon, GearIcon } from "@radix-ui/react-icons";
+import { DashboardIcon, GearIcon } from "@radix-ui/react-icons";
 import { UsersRound, Clipboard } from 'lucide-react';
 export const hrRoutes = [
   { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },

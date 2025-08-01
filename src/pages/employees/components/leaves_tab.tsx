@@ -1,23 +1,7 @@
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "../../../components/ui/table";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "../../../components/ui/select";
 import { BriefcaseMedical, Palmtree } from "lucide-react";
 import { LeaveRequest } from "../../../components/leave/leave-request";
 import { LeaveActivity } from "../../../components/employee/leave-activity";
 
-const years = ["2025", "2024"];
 const leaveTypes = [
   {
     id: "vacation",

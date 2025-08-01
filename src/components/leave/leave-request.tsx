@@ -81,7 +81,7 @@ export function LeaveRequest({
           </div>
         ) : (
           <Button
-            className="mt-4 w-full flex items-center gap-2"
+            className="mt-4 w-full flex items-center gap-2 "
             onClick={() => onRequest && onRequest(leave)}
           >
             <Calendar className="h-4 w-4" />

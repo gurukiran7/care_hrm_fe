@@ -9,6 +9,8 @@ import { BriefcaseMedical, Palmtree } from "lucide-react";
 import { LeaveRequest } from "../../components/leave/leave-request";
 import { LeaveActivity } from "../../components/employee/leave-activity";
 import { LeaveRequestForm } from "../../components/leave/leave-request-form";
+import { getHRMPermissions, hasPermission } from "../../common/Permissions";
+import { useCurrentEmployee } from "../../hooks/useEmployee";
 
 // mock data
 const onLeave = [
@@ -175,21 +177,28 @@ const leaveTypes: LeaveType[] = [
 ];
 
 export function Dashboard() {
-  const user = { role: "employee" };
+  const { employee, isLoading, error } = useCurrentEmployee();
+  const permissions = employee?.permissions ?? [];
+  const hrmPermissions = getHRMPermissions(hasPermission, permissions);
+
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [current, setCurrent] = useState(0);
   const [showForm, setShowForm] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState<LeaveType | null>(null);
-  const handleRequestLeave = (leave: LeaveType) => {
-    setSelectedLeave(leave);
+
+  const handleRequestLeave = () => {
     setShowForm(true);
   };
   function handleFormSubmit() {
     setShowForm(false);
   }
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading employee profile</div>;
+  if (!employee) return <div>No employee profile found</div>;
+
+
   return (
     <div className="p-8 container mx-auto ">
-      {user.role === "hr" && (
+      {hrmPermissions.canViewHRDashboard && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 flex flex-col gap-6">
             {selectedRequest ? (
@@ -207,21 +216,24 @@ export function Dashboard() {
         </div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        {user.role === "employee" && (
           <div>
-            <LeaveRequest
-              leave={leaveTypes[current]}
-              onRequest={handleRequestLeave}
-              onNext={() => setCurrent((c) => (c + 1) % leaveTypes.length)}
-              role="employee"
-            />
-            <LeaveRequestForm
-              open={showForm}
-              onClose={() => setShowForm(false)}
-              onSubmit={handleFormSubmit}
-            />
+            {hrmPermissions.canCreateLeaveRequest && (
+              <LeaveRequest
+                leave={leaveTypes[current]}
+                onRequest={handleRequestLeave}
+                onNext={() => setCurrent((c) => (c + 1) % leaveTypes.length)}
+                role="employee"
+              />
+            )}
+            {hrmPermissions.canCreateLeaveRequest && (
+              <LeaveRequestForm
+                open={showForm}
+                onClose={() => setShowForm(false)}
+                onSubmit={handleFormSubmit}
+              />
+            )}
           </div>
-        )}
+
         <div className="col-span-1">
           <CelebrationsList celebrations={celebrations} />
         </div>
@@ -229,11 +241,11 @@ export function Dashboard() {
           <HolidaysList holidays={holidays} />
         </div>
       </div>
-      {user.role === "employee" && (
         <div className="mt-6">
           <LeaveActivity leaveRequest={leaveActivities} />
         </div>
-      )}
     </div>
   );
 }
+
+export default Dashboard;

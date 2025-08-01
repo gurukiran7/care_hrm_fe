@@ -1,4 +1,3 @@
-
 const { fontFamily } = require('tailwindcss/defaultTheme');
 
 const config = {
@@ -9,6 +8,9 @@ const config = {
         './app/**/*.{ts,tsx}',
         './src/**/*.{ts,tsx}',
     ],
+    corePlugins: {
+        preflight: false,
+      },
     prefix: '',
     theme: {
         container: {
@@ -76,6 +78,22 @@ const config = {
         },
     },
     plugins: [require('tailwindcss-animate')],
+    safelist: [
+        'fixed',
+        'left-1/2',
+        'top-1/2',
+        '-translate-x-1/2',
+        '-translate-y-1/2',
+        'z-50',
+        'max-w-lg',
+        'p-6',
+        'shadow-lg',
+        'sm:rounded-lg',
+        'bg-white',
+        'grid',
+        'gap-4',
+        // add any other classes your dialog uses
+      ],
 } 
 
 export default config;

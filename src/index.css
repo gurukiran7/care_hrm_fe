@@ -1,0 +1,21 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+
+@import "@fontsource/figtree/300.css" layer(base);
+@import "@fontsource/figtree/400.css" layer(base);
+@import "@fontsource/figtree/500.css" layer(base);
+@import "@fontsource/figtree/600.css" layer(base);
+@import "@fontsource/figtree/700.css" layer(base);
+@import "@fontsource/figtree/800.css" layer(base);
+@import "@fontsource/figtree/900.css" layer(base);
+
+
+
+
+@layer utilities {
+.care-hrm-container ::-webkit-scrollbar {
+  display: none;
+}
+}

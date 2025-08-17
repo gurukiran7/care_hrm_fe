@@ -59,7 +59,7 @@ export function RequestDetailCard({
   }
 
   return (
-    <Card className="flex flex-col shadow-lg border border-gray-200 rounded-xl w-full max-w-2xl mx-auto">
+    <Card className="flex flex-col shadow-lg border border-gray-200 rounded-xl w-full max-w-3xl ">
       <CardHeader className="bg-gray-50 flex flex-row items-center justify-between px-4 sm:px-6 py-4 rounded-t-xl border-b">
         <div className="flex items-center gap-3">
           <Button

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Employee } from "../types/employee/employee";
 import query from "../Utils/request/query";
 import employeeApi from "../types/employee/employeeApi";
+import { LocalStorageKeys } from "../common/constants";
 
 
 type EmployeeContextType = {
@@ -18,6 +19,8 @@ export function EmployeeProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["currentEmployee"],
     queryFn: query(employeeApi.getCurrentEmployee),
+    retry: false,
+    enabled: !!localStorage.getItem(LocalStorageKeys.accessToken),
   });
 
   const employee =

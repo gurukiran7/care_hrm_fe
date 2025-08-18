@@ -49,7 +49,7 @@ export function RequestsList() {
       },
     }),
     select: (res: any) => res.results || [],
-    
+    refetchOnWindowFocus: false,
   });
 
   const { data: selectedRequest } = useQuery({

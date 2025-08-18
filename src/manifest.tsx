@@ -40,7 +40,6 @@ const manifest: Manifest = {
   },
   extends: [],
   components: {},
-  navItems: [{ url: "dashboard", name: "Dashboard" }],
 };
 
 export default manifest;

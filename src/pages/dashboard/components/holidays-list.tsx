@@ -17,7 +17,7 @@ export function HolidaysList({ holidays }: { holidays: HolidayOrLeave[] }) {
   return (
     <Card className="h-84 flex flex-col shadow-lg border border-gray-200 rounded-xl w-full">
       <CardHeader className="flex items-center gap-2 px-4 sm:px-6 py-4 border-b bg-gray-50 rounded-t-xl">
-        <CardTitle className="text-lg font-bold text-primary-700">Holidays & Leaves</CardTitle>
+        <CardTitle className="text-lg font-bold text-primary-700">Scheduled Holidays & leaves</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0">
         <ScrollArea className="h-72 pr-2">

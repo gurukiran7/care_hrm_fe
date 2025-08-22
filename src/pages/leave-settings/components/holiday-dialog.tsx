@@ -70,7 +70,7 @@ export function HolidayDialog({ open, onOpenChange, onSubmit, isPending, initial
                         onSelect={(date) => {
                           field.onChange(date?.toISOString().slice(0, 10));
                         }}
-                        disabled={() => false}
+                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                       />
                     </PopoverContent>
                   </Popover>

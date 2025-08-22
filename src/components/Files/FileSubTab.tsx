@@ -114,6 +114,7 @@ export const FilesPage = ({ type, associatingId, canEdit }: FilesTabProps) => {
 
   const fileUpload = useFileUpload({
     type: type,
+    category: "employee_document",
     multiple: true,
     allowedExtensions: BACKEND_ALLOWED_EXTENSIONS,
     allowNameFallback: false,

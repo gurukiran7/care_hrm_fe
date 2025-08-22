@@ -2,7 +2,7 @@ import type { UserBase } from "../../types/employee/employee";
 
 export type FileCategory =
   | "unspecified"
-  | "identity_proof";
+  | "employee_document";
 
   export interface CreateFileRequest {
     file_type: string | number;

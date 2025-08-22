@@ -1,6 +1,11 @@
 import type { GENDER_TYPES } from "../../common/constants";
 import type { UserType } from "../user/user";
 
+export interface Skill {
+  external_id: string;
+  name: string;
+  description: string;
+}
 
 export interface UserBase {
   id?: string;
@@ -16,42 +21,45 @@ export interface UserBase {
   email?: string;
   geo_organization?: string;
   password?: string;
+  date_of_birth?: string;
+  weekly_working_hours?: number;
+  qualification?: string;
 }
 
 export interface Employee {
   id: string;
-  user: EmployeeReadMinimal;
+  user: EmployeeRead;
   hire_date: string;
   is_on_leave?: boolean;
 }
 
 export interface EmployeeCreate {
-  user: UserBase;
+  user: UserBase & {
+    skills?: string[];
+  };
   hire_date: string;
   address?: string;
-  education?: string;
   pincode?: number;
 }
 
-  export interface EmployeeUpdate {
-    user: {
-      first_name: string;
-      last_name: string;
-      phone_number: string;
-      user_type: UserType;
-      gender: string;
-      username: string;
-      email?: string;
-      prefix?: string;
-      suffix?: string;
-      geo_organization?: string;
-      password?: string;
-    };
-    education?:  string;
-    hire_date?: string;
-    address?: string;
-    pincode?:number;
-  }
+export interface EmployeeUpdate {
+  user?: Partial<
+    UserBase & {
+      skills?: string[];
+    }
+  >;
+  education?: string;
+  hire_date?: string;
+  pincode?: number;
+}
+
+export interface EmployeeRead extends UserBase {
+  last_login: string | null;
+  profile_picture_url?: string ;
+  mfa_enabled: boolean;
+  deleted: boolean;
+  skills: Skill[];
+}
 
 export interface EmployeeReadMinimal extends UserBase {
   last_login: string;

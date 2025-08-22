@@ -8,7 +8,7 @@ import {
   ContactInfoDetails,
   EmploymentDetails,
   AddressDetails,
-  EducationDetails,
+  SkillsDetails,
 } from "./EmployeeViewDetails";
 import { HRRoles } from "../../common/constants";
 import { navigate } from "raviger";
@@ -25,11 +25,11 @@ export default function EmployeeSummaryTab({
   const authUser = useAtomValue(authUserAtom);
   const user = employeeData.user || authUser;
   const canEditEmployee =
-  authUser &&
-  (HRRoles.includes((authUser.user_type || "").toLowerCase()) ||
-    authUser.is_superuser);
+    authUser &&
+    (HRRoles.includes((authUser.user_type || "").toLowerCase()) ||
+      authUser.is_superuser);
 
-  const {employee } = useCurrentEmployee();
+  const { employee } = useCurrentEmployee();
 
   const columnsData: EmployeeChildProps = {
     employeeData,
@@ -57,13 +57,16 @@ export default function EmployeeSummaryTab({
 
   const renderAddressDetails = () => (
     <div className="overflow-visible px-4 py-5 sm:px-6 rounded-lg shadow-sm sm:rounded-lg bg-white">
-      <AddressDetails address={employeeData.address} />
+      <AddressDetails
+        address={employeeData.address}
+        pincode={employeeData.pincode}
+      />
     </div>
   );
 
-  const renderEducationDetails = () => (
+  const renderSkillsDetails = () => (
     <div className="overflow-visible px-4 py-5 sm:px-6 rounded-lg shadow-sm sm:rounded-lg bg-white">
-      <EducationDetails educations={employeeData.education || ""} />
+      <SkillsDetails skills={user.skills || []} />
     </div>
   );
 
@@ -75,7 +78,9 @@ export default function EmployeeSummaryTab({
             variant="outline"
             className="w-fit self-end"
             data-cy="edit-employee-button"
-            onClick={() => navigate(`/hrm/hrm/employees/${employeeData.id}/edit`)}
+            onClick={() =>
+              navigate(`/hrm/hrm/employees/${employeeData.id}/edit`)
+            }
           >
             <CareIcon icon="l-pen" className="mr-2 size-4" />
             {t("edit_employee")}
@@ -117,7 +122,7 @@ export default function EmployeeSummaryTab({
         <EmployeeColumns
           heading={t("education_information")}
           note={t("education_information_note")}
-          Child={renderEducationDetails}
+          Child={renderSkillsDetails}
           childProps={columnsData}
         />
       </div>

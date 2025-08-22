@@ -14,6 +14,7 @@ interface OnLeaveItem {
   name: string;
   avatar: string;
   date: string;
+  rangeStart: string;
   endDate?: string;
 }
 
@@ -54,19 +55,28 @@ export function OnLeaveList() {
     queryFn: query(leaveRequestApi.listLeaveRequests, {
       queryParams: {
         status: "approved",
-        end_date__gte: today,
+        end_date: today,
       },
     }),
     select: (res: any) =>
-      (res.results || []).map((leave: any) => ({
-        name: leave.employee_name,
-        avatar: "/profile.png",
-        date: leave.start_date,
-        endDate: leave.end_date,
-      })),
+      (res.results || []).map((leave: any) => {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const start = new Date(leave.start_date);
+        const today = new Date(todayStr);
+    
+        const effectiveStart = start < today ? todayStr : leave.start_date;
+    
+        return {
+          name: leave.employee_name,
+          avatar: "/profile.png",
+          date: effectiveStart,     
+          rangeStart: leave.start_date, 
+          endDate: leave.end_date,
+        };
+      }),
+    
   });
 
-  // Group by computed day label
   const grouped: Record<string, OnLeaveItem[]> = {};
   onLeave.forEach((item: OnLeaveItem) => {
     const label = getDayLabel(item.date);
@@ -117,7 +127,7 @@ export function OnLeaveList() {
                         />
                         <span className="font-medium text-primary-800 truncate">{l.name}</span>
                         <span className="text-xs text-gray-500">
-                          Leave {formatLeaveRange(l.date, l.endDate)}
+                        Leave {formatLeaveRange(l.rangeStart, l.endDate)}
                         </span>
                       </div>
                     ))

@@ -15,6 +15,7 @@ import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import mutate from "../../../Utils/request/mutate";
 import { toast } from "sonner";
 import { Avatar } from "../../../components/Common/avatar";
+import useFilters from "../../../hooks/useFilters";
 
 interface Request {
   id: string;
@@ -40,26 +41,38 @@ export function RequestsList() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: requests = [], isLoading } = useQuery({
-    queryKey: ["hrLeaveRequests"],
+  const { qParams, Pagination, resultsPerPage } = useFilters({
+    limit: 10, 
+    disableCache: true,
+  });
+
+  const { data: requestsData, isLoading } = useQuery({
+    queryKey: ["hrLeaveRequests", qParams, resultsPerPage],
     queryFn: query.debounced(leaveRequestApi.listLeaveRequests, {
       queryParams: {
         status: "pending,cancellation_requested,approved,rejected",
         start_date: new Date().toISOString().slice(0, 10),
+        limit: resultsPerPage,
+        offset: (qParams.page - 1) * resultsPerPage,
       },
     }),
-    select: (res: any) => res.results || [],
+    select: (res: any) => res,
     refetchOnWindowFocus: false,
   });
+
+  const requests: Request[] = requestsData?.results || [];
 
   const { data: selectedRequest } = useQuery({
     queryKey: ["hrLeaveRequest", selectedId],
     queryFn: selectedId
-      ? query.debounced(leaveRequestApi.getLeaveRequest, { pathParams: { id: selectedId } })
+      ? query.debounced(leaveRequestApi.getLeaveRequest, {
+          pathParams: { id: selectedId },
+        })
       : undefined,
     enabled: !!selectedId,
   });
 
+  // 🔹 Mutations
   const approveMutation = useMutation({
     mutationFn: (id: string) =>
       mutate(leaveRequestApi.approveLeaveRequest, { pathParams: { id } })(),
@@ -112,15 +125,19 @@ export function RequestsList() {
   }
 
   return (
-    <Card className="flex flex-col h-84 shadow-lg border border-gray-200 rounded-xl w-full max-w-3xl  ">
+    <Card className="flex flex-col h-84 shadow-lg border border-gray-200 rounded-xl w-full max-w-3xl">
       <CardHeader className="flex items-center justify-between px-4 sm:px-6 py-4 border-b bg-gray-50 rounded-t-xl">
-        <CardTitle className="text-lg font-bold text-primary-700">Leave Requests ( {requests.length})</CardTitle>
+        <CardTitle className="text-lg font-bold text-primary-700">
+          Leave Requests ({requestsData?.count ?? 0})
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0">
         <ScrollArea className="h-72 pr-2">
           <div className="flex flex-col gap-4 px-2 sm:px-4 py-3">
             {requests.length === 0 && (
-              <div className="text-center text-gray-500 py-8">No requests found.</div>
+              <div className="text-center text-gray-500 py-8">
+                No requests found.
+              </div>
             )}
             {requests.map((req: Request) => {
               const startDate = req.start_date
@@ -136,25 +153,37 @@ export function RequestsList() {
               let statusBadge = null;
               if (req.status === "approved") {
                 statusBadge = (
-                  <Badge variant="green" className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                  <Badge
+                    variant="green"
+                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
+                  >
                     <CheckCircle2 className="w-3 h-3" /> Approved
                   </Badge>
                 );
               } else if (req.status === "rejected") {
                 statusBadge = (
-                  <Badge variant="danger" className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                  <Badge
+                    variant="danger"
+                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
+                  >
                     <XCircle className="w-3 h-3" /> Rejected
                   </Badge>
                 );
               } else if (req.status === "cancellation_requested") {
                 statusBadge = (
-                  <Badge variant="yellow" className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                  <Badge
+                    variant="yellow"
+                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
+                  >
                     <Clock className="w-3 h-3" /> Cancellation Requested
                   </Badge>
                 );
               } else if (req.status === "pending") {
                 statusBadge = (
-                  <Badge variant="secondary" className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                  <Badge
+                    variant="secondary"
+                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
+                  >
                     Pending
                   </Badge>
                 );
@@ -178,7 +207,9 @@ export function RequestsList() {
                       {req.employee_name || "Unknown"}
                     </span>
                     <span className="text-gray-700 truncate text-sm md:block hidden">
-                      {`requested ${startDate} - ${endDate} off • ${req.days_requested * 8} hours`}
+                      {`requested ${startDate} - ${endDate} off • ${
+                        req.days_requested * 8
+                      } hours`}
                     </span>
                     <span className="text-xs text-gray-400 block mt-1">
                       {createdAt}
@@ -191,6 +222,12 @@ export function RequestsList() {
             })}
           </div>
         </ScrollArea>
+
+        {requestsData?.count > resultsPerPage && (
+          <div className="px-4 py-3 border-t bg-gray-50">
+            <Pagination totalCount={requestsData.count} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

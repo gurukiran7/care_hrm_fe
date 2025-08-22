@@ -21,27 +21,26 @@ export const API = <TResponse, TBody = undefined>(
 
 const routes = {
   viewUpload: {
-    path: "/api/v1/files/",
+    path: "/api/hrm/employee-documents/",
     method: "GET" as const,
     TRes: Type<PaginatedResponse<FileUploadModel>>(),
   },
   retrieveUpload: {
-    path: "/api/v1/files/{id}/",
+    path: "/api/hrm/employee-documents/{id}/",
     method: "GET" as const, 
     TRes: Type<FileUploadModel>(),
   },
   editUpload: {
-    path: "/api/v1/files/{id}/",
+    path: "/api/hrm/employee-documents/{id}/",
     method: "PUT" as const,
     TBody: Type<Partial<FileUploadModel>>(),
     TRes: Type<FileUploadModel>(),
   },
   archiveUpload: {
-    path: "/api/v1/files/{id}/archive/",
+    path: "/api/hrm/employee-documents/{id}/archive/",
     method: "POST" as const, 
     TRes: Type<FileUploadModel>(),
     TBody: Type<{ archive_reason: string }>(),
   },
-}
-
+};
 export default routes

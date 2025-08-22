@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CelebrationsList } from "./components/celebrations-list";
 import { HolidaysList } from "./components/holidays-list";
 import { LeaveRequest } from "../../components/leave/leave-request";
 import { LeaveActivity } from "../../components/leave/leave-activity";
@@ -8,6 +7,7 @@ import { useCurrentEmployee } from "../../hooks/useEmployee";
 import { useQuery } from "@tanstack/react-query";
 import query from "../../Utils/request/query";
 import leaveBalanceApi from "../../types/leaveBalance/leaveBalanceApi";
+import holidaysApi from "../../types/holidays/holidaysApi";
 import { RequestsList } from "./components/request";
 import { navigate } from "raviger";
 import { Button } from "../../components/ui/button";
@@ -17,43 +17,11 @@ import { authUserAtom } from "../../state/user-atom";
 import { HRRoles } from "../../common/constants";
 import { OnLeaveList } from "./components/on-leave-list";
 import Page from "../../common/Page";
-
-const celebrations = [
-  {
-    id: 1,
-    name: "Dr. Samuel",
-    avatar: "/avatar.jpg",
-    date: "May 31 - Happy Birthday !",
-  },
-  {
-    id: 2,
-    name: "Dr. Samuel",
-    avatar: "/avatar.jpg",
-    date: "May 31 - Happy Birthday !",
-  },
-  {
-    id: 3,
-    name: "Dr. Samuel",
-    avatar: "/avatar.jpg",
-    date: "May 31 - Happy Birthday !",
-  },
-  {
-    id: 4,
-    name: "Dr. Samuel",
-    avatar: "/avatar.jpg",
-    date: "May 31 - Happy Birthday !",
-  },
-];
-
-const holidays = [
-  { id: 1, name: "Memorial Day", date: "Monday, May 26" },
-  { id: 2, name: "Juneteenth", date: "Thursday, June 19" },
-  {
-    id: 3,
-    name: "PTO - Family event",
-    date: "Thursday, June 2",
-  },
-];
+import {
+  TableSkeleton,
+  CardListSkeleton,
+  FormSkeleton,
+} from "../../components/Common/SkeletonLoading";
 
 export function Dashboard() {
   const { employee, isLoading } = useCurrentEmployee();
@@ -79,19 +47,23 @@ export function Dashboard() {
       select: (res: any) => res.results || [],
     });
 
-  const handleRequestLeave = () => {
-    setShowForm(true);
-  };
-  function handleFormSubmit() {
-    setShowForm(false);
-  }
-  if (isLoading) return <div>Loading...</div>;
+  const { data: holidaysData = { results: [] }, isLoading: holidaysLoading } =
+    useQuery({
+      queryKey: ["employeeHolidays", employee?.id],
+      queryFn: employee?.id
+        ? query(holidaysApi.employeeHolidays, {
+            pathParams: { id: employee.id },
+          })
+        : undefined,
+      enabled: !!employee?.id,
+      select: (res: any) => (Array.isArray(res) ? res : res.results || []),
+    });
 
-  if (isLeaveBalancesLoading) return <div>Loading leave balances...</div>;
+  const handleRequestLeave = () => setShowForm(true);
+  const handleFormSubmit = () => setShowForm(false);
 
   return (
-    <Page className="md:p-8 container mx-auto " title="">
-      {" "}
+    <Page className="md:p-8 container mx-auto" title="">
       {showHRContent && (
         <div className="flex justify-start mb-6">
           <Button onClick={() => navigate("hrm/employees/create")}>
@@ -100,55 +72,72 @@ export function Dashboard() {
           </Button>
         </div>
       )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {showHRContent && <RequestsList />}
+          {showHRContent &&
+            (isLoading ? <TableSkeleton count={5} /> : <RequestsList />)}
         </div>
         <div className="flex flex-col gap-6">
-          {showHRContent && <OnLeaveList />}
+          {showHRContent &&
+            (isLoading ? <CardListSkeleton count={4} /> : <OnLeaveList />)}
         </div>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         <div>
-          {employee && (
-            <LeaveRequest
-              leave={{
-                id: leaveBalances[current].external_id,
-                title: leaveBalances[current].leave_type,
-                daysAvailable: leaveBalances[current].balance,
-                icon: null,
-              }}
-              onRequest={handleRequestLeave}
-              onNext={() => setCurrent((c) => (c + 1) % leaveBalances.length)}
-              onBack={() =>
-                setCurrent(
-                  (c) => (c - 1 + leaveBalances.length) % leaveBalances.length
-                )
-              }
-              role="employee"
-            />
-          )}
+          {isLeaveBalancesLoading ? (
+            <FormSkeleton rows={3} />
+          ) : (
+            employee && (
+              <>
+                <LeaveRequest
+                  leave={{
+                    id: leaveBalances[current]?.external_id,
+                    title: leaveBalances[current]?.leave_type,
+                    daysAvailable: leaveBalances[current]?.balance,
+                    icon: null,
+                  }}
+                  onRequest={handleRequestLeave}
+                  onNext={() =>
+                    setCurrent((c) => (c + 1) % leaveBalances.length)
+                  }
+                  onBack={() =>
+                    setCurrent(
+                      (c) =>
+                        (c - 1 + leaveBalances.length) % leaveBalances.length
+                    )
+                  }
+                  role="employee"
+                />
 
-          {employee && (
-            <LeaveRequestForm
-              open={showForm}
-              onClose={() => setShowForm(false)}
-              onSubmit={handleFormSubmit}
-              leaveBalances={leaveBalances}
-            />
+                <LeaveRequestForm
+                  open={showForm}
+                  onClose={() => setShowForm(false)}
+                  onSubmit={handleFormSubmit}
+                  leaveBalances={leaveBalances}
+                />
+              </>
+            )
           )}
         </div>
 
-        <div className="col-span-1">
-          <CelebrationsList celebrations={celebrations} />
-        </div>
-        <div className="col-span-1">
-          <HolidaysList holidays={holidays} />
-        </div>
+        {employee && (
+          <div className="col-span-1">
+            {holidaysLoading ? (
+              <CardListSkeleton count={1} />
+            ) : (
+              <HolidaysList
+                holidays={Array.isArray(holidaysData) ? holidaysData : []}
+              />
+            )}
+          </div>
+        )}
       </div>
+
       {employee && (
         <div className="mt-6">
-          <LeaveActivity />
+          {isLoading ? <TableSkeleton count={4} /> : <LeaveActivity />}
         </div>
       )}
     </Page>

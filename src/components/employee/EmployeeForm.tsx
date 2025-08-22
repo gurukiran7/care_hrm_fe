@@ -33,6 +33,7 @@ import validators from "../../Utils/validators";
 import { useTranslation } from "react-i18next";
 import DateField from "../ui/date-field";
 import { dateQueryString } from "../../Utils/utils";
+import SectionNavigator from "../../CAREUI/misc/SectionNavigator";
 
 interface EmployeeFormProps {
   employeeId?: string;
@@ -53,11 +54,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
 
   const userSchema = z
     .object({
-      first_name: z.string().min(1, t("field_required")),
-      last_name: z.string().min(1, t("field_required")),
+      first_name: z.string().trim().min(1, t("field_required")),
+      last_name: z.string().trim().min(1, t("field_required")),
       phone_number: validators().phoneNumber.required,
-      prefix: z.string().max(10).optional(),
-      suffix: z.string().max(50).optional(),
+      prefix: z.string().trim().max(10).optional(),
+      suffix: z.string().trim().max(50).optional(),
       user_type: z.enum([
         "doctor",
         "nurse",
@@ -81,6 +82,10 @@ export default function EmployeeForm(props: EmployeeFormProps) {
         ? z.string().optional()
         : z.string().email(t("invalid_email_address")),
       is_active: z.boolean().optional(),
+      date_of_birth: z.string().nonempty(t("field_required")),
+      weekly_working_hours: z.number().min(1).max(168, "Must be between 1-168"),
+      skills: z.array(z.string()).optional(),
+      qualification: z.string().optional(),
     })
     .refine(
       (data) => {
@@ -133,7 +138,6 @@ export default function EmployeeForm(props: EmployeeFormProps) {
     );
 
   const employeeSchema = z.object({
-    education: z.string().optional(),
     hire_date: z.string().nonempty("Hire date is required"),
     address: isEditMode
       ? z.string().trim().optional()
@@ -169,10 +173,13 @@ export default function EmployeeForm(props: EmployeeFormProps) {
         username: "",
         email: "",
         is_active: true,
+        date_of_birth: "",
+        weekly_working_hours: 40,
+        skills: [],
+        qualification: "",
       },
       hire_date: "",
       address: "",
-      education: "",
     },
     mode: "onSubmit",
   });
@@ -203,8 +210,13 @@ export default function EmployeeForm(props: EmployeeFormProps) {
             employeeQuery.data.user?.password_setup_method || "immediate",
           username: employeeQuery.data.user?.username || "",
           email: employeeQuery.data.user?.email || "",
+          date_of_birth: employeeQuery.data.user?.date_of_birth || "",
+          weekly_working_hours:
+            employeeQuery.data.user?.weekly_working_hours || 40,
+          skills:
+            employeeQuery.data.user?.skills?.map((s: any) => s.name) || [],
+          qualification: employeeQuery.data.user?.qualification || "",
         },
-        education: employeeQuery.data.educations || "",
         hire_date: employeeQuery.data.hire_date || undefined,
         address: employeeQuery.data.address || "",
         pincode: employeeQuery.data.pincode,
@@ -254,6 +266,10 @@ export default function EmployeeForm(props: EmployeeFormProps) {
       createEmployee(values);
     }
   }
+  const sidebarItems = [
+    { label: t("employee__general-info"), id: "general-info" },
+  ];
+
 
   if (employeeId && employeeQuery.isLoading) {
     return <Loading />;
@@ -261,18 +277,18 @@ export default function EmployeeForm(props: EmployeeFormProps) {
 
   const title = !employeeId ? "Add Employee" : "Update Employee";
 
-
   return (
     <Page title={title}>
       <hr className="mt-4 border-gray-200" />
       <div className="relative mt-4 flex flex-col md:flex-row gap-4">
+      <SectionNavigator sections={sidebarItems} className="hidden md:flex" />
 
         <Form {...form}>
           <form
             className="md:w-[500px] space-y-10"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <div id="user-info" className="space-y-6">
+            <div id="general-info" className="space-y-6">
               <FormField
                 control={form.control}
                 name="user.first_name"
@@ -510,10 +526,88 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                   )}
                 </>
               )}
+
+              <FormField
+                control={form.control}
+                name="user.date_of_birth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <DateField
+                        date={
+                          field.value
+                            ? typeof field.value === "string"
+                              ? new Date(field.value)
+                              : field.value
+                            : undefined
+                        }
+                        onChange={(date) =>
+                          field.onChange(dateQueryString(date))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="user.weekly_working_hours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Weekly Working Hours</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="user.skills"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Skills</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter comma-separated skills"
+                        value={field.value?.join(", ") || ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value.split(",").map((s) => s.trim())
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="user.qualification"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Qualification</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Qualification" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div id="employee-details" className="space-y-6">
               <div>
-                
                 <FormField
                   control={form.control}
                   name="hire_date"
@@ -539,25 +633,6 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="education"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Educations</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Enter education details "
-                        data-cy="educations-input"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Address fields */}
               <FormField
                 control={form.control}

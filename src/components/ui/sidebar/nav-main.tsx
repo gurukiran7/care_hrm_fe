@@ -116,9 +116,9 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                                     "text-gray-600 transition font-normal hover:bg-gray-200 hover:text-green-700"
                                   }
                                 >
-                                  <span className="w-full">
                                     <ActiveLink
                                       href={subItem.url}
+                                      className="w-full"
                                       activeClass={cn(
                                         subItem.url
                                           .split("/")
@@ -129,7 +129,6 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                                     >
                                       {subItem.name}
                                     </ActiveLink>
-                                  </span>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             </>

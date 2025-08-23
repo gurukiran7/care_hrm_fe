@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "../../components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
-import { CardGridSkeleton, TableSkeleton } from "../../components/Common/SkeletonLoading";
-
+import {
+  CardGridSkeleton,
+  TableSkeleton,
+} from "../../components/Common/SkeletonLoading";
 
 import query from "../../Utils/request/query";
 
@@ -23,16 +25,18 @@ export function Employees() {
   });
   const [activeTab, setActiveTab] = useView("employees", "card");
 
-  const { data: employeeListData, isFetching: employeeListFetching } = useQuery({
-    queryKey: ["employees", qParams, resultsPerPage],
-    queryFn: query.debounced(employeeApi.listEmployees, {
-      queryParams: {
-        name: qParams.name,
-        limit: resultsPerPage,
-        offset: (qParams.page - 1) * resultsPerPage,
-      },
-    }),
-  });
+  const { data: employeeListData, isFetching: employeeListFetching } = useQuery(
+    {
+      queryKey: ["employees", qParams, resultsPerPage],
+      queryFn: query.debounced(employeeApi.listEmployees, {
+        queryParams: {
+          first_name: qParams.first_name,
+          limit: resultsPerPage,
+          offset: (qParams.page - 1) * resultsPerPage,
+        },
+      }),
+    }
+  );
 
   let employeesList: React.ReactNode = <></>;
 
@@ -59,7 +63,7 @@ export function Employees() {
 
   return (
     <Page
-      title={t("Employees management")}
+      title={t("employees_management")}
       componentRight={
         <Badge
           className="bg-purple-50 text-purple-700 ml-2 text-sm font-medium rounded-xl px-3 m-3 w-max"
@@ -79,7 +83,7 @@ export function Employees() {
         <SearchInput
           options={[
             {
-              key: "name",
+              key: "first_name",
               type: "text",
               placeholder: t("search_by_name"),
               value: qParams.name || "",

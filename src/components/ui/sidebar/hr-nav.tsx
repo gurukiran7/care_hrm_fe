@@ -2,17 +2,14 @@ import { useTranslation } from "react-i18next";
 import { NavMain, type NavigationLink } from "./nav-main";
 import { UsersIcon, SettingsIcon } from "lucide-react";
 import { useSidebar } from "../sidebar";
-
 import { useCurrentEmployee } from "../../../hooks/useEmployee";
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "../sidebar";
 import { useNavigate } from "raviger";
 import { Avatar } from "../../Common/avatar";
 import { DashboardIcon } from "@radix-ui/react-icons";
 
-export function HRNav() {
-  const { t } = useTranslation();
-
-  const links: NavigationLink[] = [
+export function generateHRLinks(t: any): NavigationLink[] {
+  return [
     {
       name: t("dashboard", { defaultValue: "HR Dashboard" }),
       url: "/hrm/dashboard",
@@ -24,13 +21,26 @@ export function HRNav() {
       icon: <UsersIcon className="w-4 h-4" />,
     },
     {
-      name: t("leave settings", { defaultValue: "Leave Settings" }),
+      name: t("leave_settings", { defaultValue: "Leave Settings" }),
       url: "/hrm/settings",
       icon: <SettingsIcon className="w-4 h-4" />,
+      children: [
+        {
+          name: t("holidays", { defaultValue: "Holidays" }),
+          url: "/hrm/settings/holidays",
+        },
+        {
+          name: t("leave_types", { defaultValue: "Leave Types" }),
+          url: "/hrm/settings/leave-types",
+        },
+      ],
     },
   ];
+}
 
-  return <NavMain links={links} />;
+export function HRNav() {
+  const { t } = useTranslation();
+  return <NavMain links={generateHRLinks(t)} />;
 }
 
 export function HRNavUser() {

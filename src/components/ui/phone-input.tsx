@@ -2,10 +2,11 @@ import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import * as RPNInput from "react-phone-number-input";
-import Flags from "react-world-flags";
+import flags from "react-phone-number-input/flags";
+
 import { cn } from "../../lib/utils";
 
-import { Button } from "../../components/ui/button";
+import { Button } from "./button";
 import {
   Command,
   CommandEmpty,
@@ -13,14 +14,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../../components/ui/command";
-import { Input } from "../../components/ui/input";
+} from "./command";
+import { Input } from "./input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../components/ui/popover";
-import { ScrollArea } from "../../components/ui/scroll-area";
+} from "./popover";
+import { ScrollArea } from "./scroll-area";
 
 type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
@@ -48,6 +49,7 @@ function PhoneInput({
       flagComponent={FlagComponent}
       countrySelectComponent={CountrySelect}
       inputComponent={InputComponent}
+      defaultCountry="IN"
       smartCaret={true}
       /**
        * Handles the onChange event.
@@ -204,9 +206,11 @@ const CountrySelectOption = ({
 };
 
 const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
+  const Flag = flags[country];
+
   return (
     <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20 [&_svg]:size-full">
-      <Flags code={country} title={countryName} style={{ width: "100%", height: "100%" }} />
+      {Flag && <Flag title={countryName} />}
     </span>
   );
 };

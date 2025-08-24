@@ -17,9 +17,31 @@ export async function callApi<Route extends ApiRoute<unknown, unknown>>(
   if (options?.body) {
     fetchOptions.body = JSON.stringify(options.body);
   }
-  const response = await fetch(url, fetchOptions);
-  if (!response.ok) throw new Error("API error");
-  return response.json();
+
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch {
+    throw new Error("Network Error");
+  }
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    throw {
+      message: "Request Failed",
+      status: response.status,
+      errors: data?.errors,
+      cause: data,
+    };
+  }
+
+  return data;
 }
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

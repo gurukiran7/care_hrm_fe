@@ -34,6 +34,7 @@ import { useTranslation } from "react-i18next";
 import DateField from "../ui/date-field";
 import { dateQueryString } from "../../Utils/utils";
 import SectionNavigator from "../../CAREUI/misc/SectionNavigator";
+import { PhoneInput } from "../ui/phone-input";
 
 interface EmployeeFormProps {
   employeeId?: string;
@@ -230,11 +231,31 @@ export default function EmployeeForm(props: EmployeeFormProps) {
       mutationFn: mutate(employeeApi.addEmployee),
       onSuccess: () => {
         toast.success("Employee created successfully");
-        navigate("/employees");
+        navigate("/hrm/employees/");
       },
-      onError: () => {
-        toast.error("Failed to create employee");
-      },
+      onError: (error: any) => {
+        const errors = error?.errors;
+        if (errors) {
+          let firstField: string | null = null;
+          errors.forEach((err: any, index:number) => {
+            const fieldPath = err.loc.join(".");
+            const cleanMsg = err.msg?.replace(/^Value error, /, "") || err.ctx?.error || "Server error";
+            form.setError(fieldPath as any, {
+              type: "manual",
+              message: cleanMsg,
+            });
+            if (index === 0) {
+              firstField = fieldPath;
+            }
+          });
+          if (firstField) {
+            form.setFocus(firstField as any);
+          }
+          
+        } else {
+          toast.error("Failed to create employee");
+        }
+      }
     }
   );
 
@@ -247,9 +268,29 @@ export default function EmployeeForm(props: EmployeeFormProps) {
         toast.success("Employee updated successfully");
         navigate("/hrm/employees/" + employeeId);
       },
-      onError: () => {
-        toast.error("Failed to update employee");
-      },
+      onError: (error: any) => {
+        const errors = error?.errors;
+        if (errors) {
+          let firstField: string | null = null;
+          errors.forEach((err: any, index:number) => {
+            const fieldPath = err.loc.join(".");
+            const cleanMsg = err.msg?.replace(/^Value error, /, "") || err.ctx?.error || "Server error";
+            form.setError(fieldPath as any, {
+              type: "manual",
+              message: cleanMsg,
+            });
+            if (index === 0) {
+              firstField = fieldPath;
+            }
+          });
+          if (firstField) {
+            form.setFocus(firstField as any);
+          }
+          
+        } else {
+          toast.error("Failed to update employee");
+        }
+      }
     }
   );
 
@@ -270,7 +311,6 @@ export default function EmployeeForm(props: EmployeeFormProps) {
     { label: t("employee__general-info"), id: "general-info" },
   ];
 
-
   if (employeeId && employeeQuery.isLoading) {
     return <Loading />;
   }
@@ -281,7 +321,7 @@ export default function EmployeeForm(props: EmployeeFormProps) {
     <Page title={title}>
       <hr className="mt-4 border-gray-200" />
       <div className="relative mt-4 flex flex-col md:flex-row gap-4">
-      <SectionNavigator sections={sidebarItems} className="hidden md:flex" />
+        <SectionNavigator sections={sidebarItems} className="hidden md:flex" />
 
         <Form {...form}>
           <form
@@ -322,9 +362,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Phone Number"
+                      <PhoneInput
                         {...field}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Phone Number"
                         maxLength={14}
                       />
                     </FormControl>

@@ -24,8 +24,8 @@ const routes = {
   "/hrm/employees/:id/edit": (params: { id: string }) => (
     <EmployeeForm employeeId={params.id} />
   ),
-  "/settings/leave-types":()=><LeaveTypesIndex/>,
-  "/settings/holidays":()=><HolidaysIndex/>,
+  "/settings/leave-types": () => <LeaveTypesIndex />,
+  "/settings/holidays": () => <HolidaysIndex />,
 };
 
 function App() {

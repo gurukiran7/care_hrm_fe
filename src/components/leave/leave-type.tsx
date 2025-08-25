@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from "../ui/card";
 import { Button } from "../ui/button";
+import { t } from "i18next";
 
 export type LeaveTypeItem = {
   icon: React.ReactNode;
@@ -29,7 +30,7 @@ export function LeaveType({ leaveTypes }: LeaveTypeProps) {
         <Card key={idx} className="relative flex flex-col h-72">
           <CardHeader>
             <CardTitle className="flex flex-row gap-2">
-              <Calendar /> Leave
+              <Calendar /> {t("leave_type__card_title", { defaultValue: "Leave" })}
             </CardTitle>
           </CardHeader>
           <CardContent className="relative">
@@ -60,14 +61,14 @@ export function LeaveType({ leaveTypes }: LeaveTypeProps) {
                 className="flex-1 flex items-center gap-1"
                 onClick={leave.onAdjust}
               >
-                +/- Adjust balance
+                {t("leave_type__adjust_balance", { defaultValue: "+/- Adjust balance" })}
               </Button>
               <Button
                 variant="outline"
                 className="flex-1 flex items-center gap-1"
                 onClick={leave.onRemove}
               >
-                Remove
+                {t("common__remove", { defaultValue: "Remove" })}
               </Button>
             </div>
           </CardFooter>

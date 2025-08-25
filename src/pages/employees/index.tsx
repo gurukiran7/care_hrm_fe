@@ -63,7 +63,7 @@ export function Employees() {
 
   return (
     <Page
-      title={t("employees_management")}
+      title={t("employees_management", {defaultValue: "Employees Management"})}
       componentRight={
         <Badge
           className="bg-purple-50 text-purple-700 ml-2 text-sm font-medium rounded-xl px-3 m-3 w-max"

@@ -8,6 +8,7 @@ import query from "../../Utils/request/query";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import mutate from "../../Utils/request/mutate";
+import { useTranslation } from "react-i18next";
 
 const leaveTypeIcons: Record<string, React.ReactNode> = {
   "Vacation Leave": <Palmtree />,
@@ -21,6 +22,7 @@ export function LeavesTab({
   employeeData: any;
   canEdit?: boolean;
 }) {
+  const { t } = useTranslation();
   const { employee } = useCurrentEmployee();
   const canAdjustLeave = !!canEdit;
   const isOwnProfile = employee?.id === employeeData?.id;
@@ -43,13 +45,17 @@ export function LeavesTab({
         balance,
       }),
     onSuccess: () => {
-      toast.success("Leave balance updated successfully");
+      toast.success(
+        t("leave_balance__update_success", { defaultValue: "Leave balance updated successfully" })
+      );
       queryClient.invalidateQueries({
         queryKey: ["leaveBalances", employeeData.id],
       });
     },
     onError: () => {
-      toast.error("Failed to update leave balance");
+      toast.error(
+        t("leave_balance__update_failed", { defaultValue: "Failed to update leave balance" })
+      );
     },
   });
 
@@ -58,11 +64,11 @@ export function LeavesTab({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {isLoading ? (
           <div className="text-center col-span-3 py-8 text-gray-500">
-            Loading leave balances...
+            {t("leave_balance__loading", { defaultValue: "Loading leave balances..." })}
           </div>
         ) : leaveBalances.length === 0 ? (
           <div className="text-center col-span-3 py-8 text-gray-400">
-            No leave balances found
+            {t("leave_balance__none_found", { defaultValue: "No leave balances found" })}
           </div>
         ) : (
           leaveBalances.map((balance: any) => (
@@ -70,7 +76,8 @@ export function LeavesTab({
               key={balance.id}
               leave={{
                 id: balance.external_id,
-                title: balance?.leave_type ?? "Leave",
+                title:
+                  balance?.leave_type ?? t("leave__title_fallback", { defaultValue: "Leave" }),
                 daysAvailable: balance.balance,
                 icon: leaveTypeIcons[balance?.leave_type?.name as string] ?? null,
               }}

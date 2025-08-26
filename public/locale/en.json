@@ -75,5 +75,8 @@
   "employee__gender_male": "Male",
   "employee__gender_female": "Female",
   "employee__gender_transgender": "Transgender",
-  "employee__gender_non_binary": "Non Binary"
+  "employee__gender_non_binary": "Non Binary",
+  "search_by_name": "Search by name",
+  "entity_count": "{{count}} {{entity}}",
+  "employee": "Employees"
 }

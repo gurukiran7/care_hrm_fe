@@ -3,7 +3,7 @@ import { Dashboard } from "./pages/dashboard";
 import { Employees } from "./pages/employees";
 import { LeaveTypesSettings } from "./pages/leave-settings";
 import { AppSidebar } from "./components/ui/sidebar/app-sidebar";
-import { SidebarProvider } from "./components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import useSidebarState from "./hooks/useSidebarState";
 import EmployeeHome from "./components/employee/EmployeeHome";
 import EmployeeForm from "./components/employee/EmployeeForm";
@@ -36,6 +36,9 @@ function App() {
     <SidebarProvider defaultOpen={sidebarOpen}>
       <div className="flex h-full min-h-screen w-full bg-gray-50">
         <AppSidebar />
+        <div className="absolute top-0 pt-4 pl-[-4px] z-20 md:hidden flex">
+          <SidebarTrigger />
+        </div>
 
         {routeResult || <div className="">Page not found</div>}
       </div>

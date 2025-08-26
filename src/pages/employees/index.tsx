@@ -63,7 +63,7 @@ export function Employees() {
 
   return (
     <Page
-      title={t("employees_management")}
+      title={t("employees_management", {defaultValue: "Employees Management"})}
       componentRight={
         <Badge
           className="bg-purple-50 text-purple-700 ml-2 text-sm font-medium rounded-xl px-3 m-3 w-max"
@@ -77,6 +77,7 @@ export function Employees() {
               })}
         </Badge>
       }
+      className="max-w-full"
     >
       <hr className="mt-4 border-gray-200" />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 m-5 ml-0">

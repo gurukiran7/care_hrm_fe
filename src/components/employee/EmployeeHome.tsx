@@ -121,11 +121,11 @@ export default function EmployeeHome(props: EmployeeHomeProps) {
                   >
                     <div className="px-3 py-1.5" id={p.toLowerCase()}>
                       {p === "PROFILE"
-                        ? "Profile"
+                        ? t("employee__tab_profile", { defaultValue: "Profile" })
                         : p === "LEAVES"
-                        ? "Leaves"
+                        ? t("employee__tab_leaves", { defaultValue: "Leaves" })
                         : p === "DOCS"
-                        ? "Documents"
+                        ? t("employee__tab_documents", { defaultValue: "Documents" })
                         : p}
                     </div>
                   </Link>

@@ -10,6 +10,8 @@ import { Badge } from "../../../components/ui/badge";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { MessageCircleMore, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Avatar } from "../../../components/Common/avatar";
+import { navigate } from "raviger";
+import { useTranslation } from "react-i18next";
 
 export function RequestDetailCard({
   request,
@@ -30,30 +32,30 @@ export function RequestDetailCard({
     ? new Date(request.requested_at).toLocaleString()
     : "";
 
-  // Status badge
+  const { t } = useTranslation();
   let statusBadge = null;
   if (request.status === "approved") {
     statusBadge = (
       <Badge variant="green" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <CheckCircle2 className="w-4 h-4" /> Approved
+        <CheckCircle2 className="w-4 h-4" /> {t("leave_request__approved", { defaultValue: "Approved" })}
       </Badge>
     );
   } else if (request.status === "rejected") {
     statusBadge = (
       <Badge variant="danger" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <XCircle className="w-4 h-4" /> Rejected
+        <XCircle className="w-4 h-4" /> {t("leave_request__rejected", { defaultValue: "Rejected" })}
       </Badge>
     );
   } else if (request.status === "cancellation_requested") {
     statusBadge = (
       <Badge variant="yellow" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <Clock className="w-4 h-4" /> Cancellation Requested
+        <Clock className="w-4 h-4" /> {t("leave_request__cancellation_requested", { defaultValue: "Cancellation Requested" })}
       </Badge>
     );
   } else if (request.status === "pending") {
     statusBadge = (
       <Badge variant="secondary" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        Pending
+        {t("leave_request__pending", { defaultValue: "Pending" })}
       </Badge>
     );
   }
@@ -73,7 +75,7 @@ export function RequestDetailCard({
           </Button>
           <div>
             <CardTitle className="text-lg font-semibold text-primary-700">
-              Leave Request Details
+              {t("leave_request__details_title", { defaultValue: "Leave Request Details" })}
             </CardTitle>
             <CardDescription className="text-xs text-gray-500">
               {request.employee_name || "Unknown"} &middot; {createdAt}
@@ -86,7 +88,11 @@ export function RequestDetailCard({
       </CardHeader>
       <CardContent className="p-5 space-y-6">
         {/* Employee Info */}
-        <div className="flex items-center gap-4">
+        <div
+          className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 rounded transition"
+          onClick={() => navigate(`/hrm/employees/${request.employee}`)}
+          title="View Employee Profile"
+        >
           <Avatar
             className="size-12 font-semibold text-secondary-800 shadow flex-shrink-0"
             name={request.employee_name || "Unknown"}
@@ -94,7 +100,7 @@ export function RequestDetailCard({
           />
           <div>
             <CardTitle className="text-base font-semibold text-primary-800">
-              {request.employee_name || "Unknown"}
+              {request.employee_name || t("employee__employee_not_found", { defaultValue: "Unknown" })}
             </CardTitle>
             <CardDescription className="text-sm text-gray-500">
               {request.leave_balance} days of{" "}
@@ -113,13 +119,12 @@ export function RequestDetailCard({
           </span>
         </div>
 
-        {/* Reason */}
+
         <div className="bg-slate-50 border rounded-lg p-3 flex items-center gap-2 text-gray-700">
           <MessageCircleMore className="w-4 h-4" />
-          <span>{request.reason || "No message"}</span>
+          <span>{request.reason || t("leave_request__no_message", { defaultValue: "No message" })}</span>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-row gap-3 justify-end pt-2">
           {request.status === "pending" && (
             <>
@@ -129,7 +134,7 @@ export function RequestDetailCard({
                 className="rounded-full"
                 onClick={() => onApprove?.(request.id)}
               >
-                Approve
+                {t("leave_request__approve", { defaultValue: "Approve" })}
               </Button>
               <Button
                 size="sm"
@@ -137,7 +142,7 @@ export function RequestDetailCard({
                 className="rounded-full"
                 onClick={() => onReject?.(request.id)}
               >
-                Reject
+                {t("leave_request__reject", { defaultValue: "Reject" })}
               </Button>
             </>
           )}
@@ -148,7 +153,7 @@ export function RequestDetailCard({
               className="rounded-full"
               onClick={() => onReject?.(request.id)}
             >
-              Reject
+              {t("leave_request__reject", { defaultValue: "Reject" })}
             </Button>
           )}
           {request.status === "rejected" && (
@@ -158,7 +163,7 @@ export function RequestDetailCard({
               className="rounded-full"
               onClick={() => onApprove?.(request.id)}
             >
-              Approve
+              {t("leave_request__approve", { defaultValue: "Approve" })}
             </Button>
           )}
           {request.status === "cancellation_requested" && (
@@ -168,7 +173,7 @@ export function RequestDetailCard({
               className="rounded-full"
               onClick={() => onCancel?.(request.id)}
             >
-              Approve Cancellation
+              {t("leave_request__approve_cancellation", { defaultValue: "Approve Cancellation" })}
             </Button>
           )}
         </div>

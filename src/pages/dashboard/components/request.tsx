@@ -16,6 +16,7 @@ import mutate from "../../../Utils/request/mutate";
 import { toast } from "sonner";
 import { Avatar } from "../../../components/Common/avatar";
 import useFilters from "../../../hooks/useFilters";
+import { CardListSkeleton } from "../../../components/Common/SkeletonLoading";
 
 interface Request {
   id: string;
@@ -72,7 +73,6 @@ export function RequestsList() {
     enabled: !!selectedId,
   });
 
-  // 🔹 Mutations
   const approveMutation = useMutation({
     mutationFn: (id: string) =>
       mutate(leaveRequestApi.approveLeaveRequest, { pathParams: { id } })(),
@@ -110,7 +110,22 @@ export function RequestsList() {
   const handleReject = (id: string) => rejectMutation.mutate(id);
   const handleCancel = (id: string) => approveCancelMutation.mutate(id);
 
-  if (isLoading) return <div>Loading requests...</div>;
+  if (isLoading) {
+    return (
+      <Card className="flex flex-col h-84 shadow-lg border border-gray-200 rounded-xl w-full max-w-3xl">
+        <CardHeader className="flex items-center justify-between px-4 sm:px-6 py-4 border-b bg-gray-50 rounded-t-xl">
+          <CardTitle className="text-lg font-bold text-primary-700">
+            Leave Requests
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 flex flex-col p-0">
+          <ScrollArea className="h-72 pr-2">
+            <CardListSkeleton count={4} />
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (selectedId && selectedRequest) {
     return (

@@ -9,6 +9,7 @@ import {
 } from "../../../components/ui/card";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { Avatar } from "../../../components/Common/avatar";
+import { CardListSkeleton } from "../../../components/Common/SkeletonLoading";
 
 interface OnLeaveItem {
   name: string;
@@ -106,7 +107,7 @@ export function OnLeaveList() {
         <ScrollArea className="h-72 pr-2">
           <div className="flex flex-col space-y-2 px-2 sm:px-4 py-2">
             {isLoading ? (
-              <div className="text-center text-gray-500 py-8">Loading...</div>
+              <CardListSkeleton count={4} />
             ) : dayLabels.length === 0 ? (
               <div className="text-center text-gray-400 text-xs py-8">Nobody is on leave</div>
             ) : (

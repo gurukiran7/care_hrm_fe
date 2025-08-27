@@ -23,7 +23,7 @@ import CareIcon from "../../../CAREUI/icons/CareIcon";
 import { useTranslation } from "react-i18next";
 import { TableSkeleton } from "../../../components/Common/SkeletonLoading";
 import { EmptyState } from "../../../components/ui/empty-state";
-import { Card, CardContent } from "../../../components/ui/card";
+import { Card, CardContent, CardFooter } from "../../../components/ui/card";
 
 function LeaveTypeCard({
   leaveType,
@@ -37,34 +37,37 @@ function LeaveTypeCard({
   const { t } = useTranslation();
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="font-medium text-gray-900 mb-2">{leaveType.name}</h3>
-            <p className="text-sm text-gray-600 mb-3">
-              {t("default_days")}: {leaveType.default_days ?? "-"}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(leaveType)}
-            >
-              <CareIcon icon="l-edit" className="size-4" />
-              {t("edit")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDelete(leaveType)}
-            >
-              <CareIcon icon="l-trash" className="size-4 text-red-500" />
-              {t("delete")}
-            </Button>
-          </div>
+      <CardContent className="p-6 pb-2">
+        <div className="mb-4">
+          <h3
+            className="font-medium text-gray-900 mb-2 break-words line-clamp-2"
+            title={leaveType.name}
+          >
+            {leaveType.name}
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            {t("default_days")}: {leaveType.default_days ?? "-"}
+          </p>
         </div>
       </CardContent>
+      <CardFooter className="flex justify-between ">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(leaveType)}
+        >
+          <CareIcon icon="l-edit" className="size-4" />
+          {t("edit")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onDelete(leaveType)}
+        >
+          <CareIcon icon="l-trash" className="size-4 text-red-500" />
+          {t("delete")}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
@@ -133,10 +136,10 @@ export default function LeaveTypesIndex() {
   const currentEdit = leaveTypes.find((lt: any) => lt.id === editId);
 
   return (
-    <Page title={t("leave_types")} hideTitleOnPage>
+    <Page title={t("leave_types")} hideTitleOnPage >
       <div className="container mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-700">
+          <h1 className="text-2xl font-bold text-green-700">
             {t("leave_types")}
           </h1>
           <div className="mb-6 flex items-center justify-between">
@@ -185,7 +188,7 @@ export default function LeaveTypesIndex() {
           />
         ) : (
           <>
-            <div className="rounded-lg border hidden md:block">
+            <div className="rounded-lg border hidden md:block min-w-[800px]">
               <Table>
                 <TableHeader className="bg-gray-100">
                   <TableRow>

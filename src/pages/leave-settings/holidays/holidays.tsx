@@ -19,7 +19,7 @@ import type { Holiday } from "../../../types/holidays/holidays";
 import CareIcon from "../../../CAREUI/icons/CareIcon";
 import { TableSkeleton } from "../../../components/Common/SkeletonLoading";
 import { EmptyState } from "../../../components/ui/empty-state";
-import { Card, CardContent } from "../../../components/ui/card";
+import { Card, CardContent, CardFooter } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useTranslation } from "react-i18next";
 import Page from "../../../common/Page";
@@ -36,39 +36,42 @@ function HolidayCard({
   const { t } = useTranslation();
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="font-medium text-gray-900 mb-2">{holiday.name}</h3>
+      <CardContent className="p-6 pb-2">
+        <div className="mb-4">
+          <h3
+            className="font-medium text-gray-900 mb-2 break-words line-clamp-2"
+            title={holiday.name}
+          >
+            {holiday.name}
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            {t("date")}: {holiday.date}
+          </p>
+          {holiday.description && (
             <p className="text-sm text-gray-600 mb-3">
-              {t("date")}: {holiday.date}
+              {t("description")}: {holiday.description}
             </p>
-            {holiday.description && (
-              <p className="text-sm text-gray-600 mb-3">
-                {t("description")}: {holiday.description}
-              </p>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(holiday)}
-            >
-              <CareIcon icon="l-edit" className="size-4" />
-              {t("edit")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDelete(holiday)}
-            >
-              <CareIcon icon="l-trash" className="size-4 text-red-500" />
-              {t("delete")}
-            </Button>
-          </div>
+          )}
         </div>
       </CardContent>
+      <CardFooter className="flex justify-between ">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(holiday)}
+        >
+          <CareIcon icon="l-edit" className="size-4" />
+          {t("edit")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onDelete(holiday)}
+        >
+          <CareIcon icon="l-trash" className="size-4 text-red-500" />
+          {t("delete")}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
@@ -168,7 +171,7 @@ export default function HolidaysIndex() {
         ) : (
           <>
             {/* Table view for desktop */}
-            <div className="rounded-lg border hidden md:block">
+            <div className="rounded-lg border hidden md:block min-w-[800px]">
               <Table>
                 <TableHeader className="bg-gray-100">
                   <TableRow>

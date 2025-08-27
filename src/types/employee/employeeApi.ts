@@ -1,5 +1,5 @@
 import { Type } from "../../Utils/request/api";
-import type { Employee, EmployeeCreate, EmployeeUpdate } from "./employee";
+import type { Employee, EmployeeCreate, EmployeeUpdate, Skill } from "./employee";
 
 export default {
   addEmployee: {
@@ -38,6 +38,12 @@ export default {
     method: "GET" as const,
     TRes: Type<Employee>(),
   },
+
+  listSkills:{
+    path:"/api/hrm/skills/",
+    method:"GET" as const,
+    TRes: Type<{ count: number; results: Skill[] }>(),
+  }
 
   
 };

@@ -45,6 +45,7 @@ import {
   FILE_EXTENSIONS,
   HRRoles,
 } from "../../common/constants";
+import { Label } from "../ui/label";
 
 interface FilesTabProps {
   type: "employee";
@@ -305,54 +306,54 @@ export const FilesPage = ({ type, associatingId, canEdit }: FilesTabProps) => {
     );
   };
 
-  // const FileUploadButtons = () => {
-  //   if (!canEdit) return <></>;
-  //   return (
-  //     <DropdownMenu>
-  //       <DropdownMenuTrigger asChild>
-  //         <Button
-  //           variant="outline_primary"
-  //           className="flex flex-row items-center mr-2"
-  //           data-cy="add-files-button"
-  //         >
-  //           <CareIcon icon="l-file-upload" className="mr-1" />
-  //           <span>Add Files</span>
-  //           <CareIcon icon="l-angle-down" className="ml-1" />
-  //         </Button>
-  //       </DropdownMenuTrigger>
-  //       <DropdownMenuContent
-  //         align="end"
-  //         className="w-[calc(100vw-2.5rem)] sm:w-full"
-  //       >
-  //         <DropdownMenuItem
-  //           className="flex flex-row items-center"
-  //           onSelect={(e: { preventDefault: () => void }) => {
-  //             e.preventDefault();
-  //           }}
-  //           aria-label="Choose File"
-  //         >
-  //           <Label
-  //             htmlFor={`file_upload_${type}`}
-  //             data-cy="choose-file-option"
-  //             className="flex items-center w-full text-primary-900 hover:text-black py-1 font-medium"
-  //           >
-  //             <CareIcon icon="l-file-upload-alt" />
-  //             <span>Choose File</span>
-  //           </Label>
-  //           {fileUpload.Input({ className: "hidden" })}
-  //         </DropdownMenuItem>
-  //         <DropdownMenuItem
-  //           onSelect={() => fileUpload.handleCameraCapture()}
-  //           className="flex items-center text-primary-900 font-medium"
-  //           aria-label="Open Camera"
-  //         >
-  //           <CareIcon icon="l-camera" />
-  //           <span>Open Camera</span>
-  //         </DropdownMenuItem>
-  //       </DropdownMenuContent>
-  //     </DropdownMenu>
-  //   );
-  // };
+  const FileUploadButtons = () => {
+    if (!canEdit) return <></>;
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline_primary"
+            className="flex flex-row items-center mr-2"
+            data-cy="add-files-button"
+          >
+            <CareIcon icon="l-file-upload" className="mr-1" />
+            <span>Add Files</span>
+            <CareIcon icon="l-angle-down" className="ml-1" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className="w-[calc(100vw-2.5rem)] sm:w-full"
+        >
+          <DropdownMenuItem
+            className="flex flex-row items-center"
+            onSelect={(e: { preventDefault: () => void }) => {
+              e.preventDefault();
+            }}
+            aria-label="Choose File"
+          >
+            <Label
+              htmlFor={`file_upload_${type}`}
+              data-cy="choose-file-option"
+              className="flex items-center w-full text-primary-900 hover:text-black py-1 font-medium"
+            >
+              <CareIcon icon="l-file-upload-alt" />
+              <span>Choose File</span>
+            </Label>
+            {fileUpload.Input({ className: "hidden" })}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => fileUpload.handleCameraCapture()}
+            className="flex items-center text-primary-900 font-medium"
+            aria-label="Open Camera"
+          >
+            <CareIcon icon="l-camera" />
+            <span>Open Camera</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   const RenderCard = () => (
     <div className="xl:hidden space-y-4 px-2">
@@ -538,6 +539,7 @@ export const FilesPage = ({ type, associatingId, canEdit }: FilesTabProps) => {
 
   return (
     <div className="space-y-4">
+       {fileManager.Dialogues}
       <ArchivedFileDialog
         open={openArchivedFileDialog}
         onOpenChange={setOpenArchivedFileDialog}
@@ -616,6 +618,7 @@ export const FilesPage = ({ type, associatingId, canEdit }: FilesTabProps) => {
         </div>
 
         <div className="ml-auto">
+        <FileUploadButtons />
         </div>
       </div>
       <FilterBadges />

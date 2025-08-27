@@ -34,12 +34,11 @@ export default function EmployeeHome(props: EmployeeHomeProps) {
   const { t } = useTranslation();
   const { goBack } = useAppHistory();
 
-  const user = useAtomValue(authUserAtom);
+  const authUser = useAtomValue(authUserAtom);
   const canEdit =
-    user &&
-    (("user_type" in user &&
-      HRRoles.includes((user.user_type || "").toLowerCase())) ||
-      ("is_superuser" in user && user.is_superuser));
+    authUser &&
+    (HRRoles.includes((authUser.user_type || "").toLowerCase()) ||
+      authUser.is_superuser);
 
   const {
     data: employeeData,
@@ -121,11 +120,15 @@ export default function EmployeeHome(props: EmployeeHomeProps) {
                   >
                     <div className="px-3 py-1.5" id={p.toLowerCase()}>
                       {p === "PROFILE"
-                        ? t("employee__tab_profile", { defaultValue: "Profile" })
+                        ? t("employee__tab_profile", {
+                            defaultValue: "Profile",
+                          })
                         : p === "LEAVES"
                         ? t("employee__tab_leaves", { defaultValue: "Leaves" })
                         : p === "DOCS"
-                        ? t("employee__tab_documents", { defaultValue: "Documents" })
+                        ? t("employee__tab_documents", {
+                            defaultValue: "Documents",
+                          })
                         : p}
                     </div>
                   </Link>

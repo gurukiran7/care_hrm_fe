@@ -35,7 +35,7 @@ import DateField from "../ui/date-field";
 import { dateQueryString } from "../../Utils/utils";
 import SectionNavigator from "../../CAREUI/misc/SectionNavigator";
 import { PhoneInput } from "../ui/phone-input";
-
+import ReactSelect from "react-select";
 interface EmployeeFormProps {
   employeeId?: string;
 }
@@ -192,6 +192,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
     enabled: !!employeeId,
   });
 
+  const skillsQuery = useQuery({
+    queryKey: ["skills"],
+    queryFn: query(employeeApi.listSkills),
+  });
+
   useEffect(() => {
     if (employeeQuery.data && employeeQuery.data.user) {
       form.reset({
@@ -215,7 +220,7 @@ export default function EmployeeForm(props: EmployeeFormProps) {
           weekly_working_hours:
             employeeQuery.data.user?.weekly_working_hours || 40,
           skills:
-            employeeQuery.data.user?.skills?.map((s: any) => s.name) || [],
+            employeeQuery.data.user?.skills?.map((s: any) => s.external_id) || [],
           qualification: employeeQuery.data.user?.qualification || "",
         },
         hire_date: employeeQuery.data.hire_date || undefined,
@@ -237,9 +242,12 @@ export default function EmployeeForm(props: EmployeeFormProps) {
         const errors = error?.errors;
         if (errors) {
           let firstField: string | null = null;
-          errors.forEach((err: any, index:number) => {
+          errors.forEach((err: any, index: number) => {
             const fieldPath = err.loc.join(".");
-            const cleanMsg = err.msg?.replace(/^Value error, /, "") || err.ctx?.error || "Server error";
+            const cleanMsg =
+              err.msg?.replace(/^Value error, /, "") ||
+              err.ctx?.error ||
+              "Server error";
             form.setError(fieldPath as any, {
               type: "manual",
               message: cleanMsg,
@@ -251,11 +259,10 @@ export default function EmployeeForm(props: EmployeeFormProps) {
           if (firstField) {
             form.setFocus(firstField as any);
           }
-          
         } else {
           toast.error("Failed to create employee");
         }
-      }
+      },
     }
   );
 
@@ -272,9 +279,12 @@ export default function EmployeeForm(props: EmployeeFormProps) {
         const errors = error?.errors;
         if (errors) {
           let firstField: string | null = null;
-          errors.forEach((err: any, index:number) => {
+          errors.forEach((err: any, index: number) => {
             const fieldPath = err.loc.join(".");
-            const cleanMsg = err.msg?.replace(/^Value error, /, "") || err.ctx?.error || "Server error";
+            const cleanMsg =
+              err.msg?.replace(/^Value error, /, "") ||
+              err.ctx?.error ||
+              "Server error";
             form.setError(fieldPath as any, {
               type: "manual",
               message: cleanMsg,
@@ -286,11 +296,10 @@ export default function EmployeeForm(props: EmployeeFormProps) {
           if (firstField) {
             form.setFocus(firstField as any);
           }
-          
         } else {
           toast.error("Failed to update employee");
         }
-      }
+      },
     }
   );
 
@@ -308,7 +317,10 @@ export default function EmployeeForm(props: EmployeeFormProps) {
     }
   }
   const sidebarItems = [
-    { label: t("employee__general-info", { defaultValue: "General Info" }), id: "general-info" },
+    {
+      label: t("employee__general-info", { defaultValue: "General Info" }),
+      id: "general-info",
+    },
   ];
 
   if (employeeId && employeeQuery.isLoading) {
@@ -336,9 +348,18 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.first_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__first_name", { defaultValue: "First Name" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__first_name", {
+                        defaultValue: "First Name",
+                      })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__first_name", { defaultValue: "First Name" })} {...field} />
+                      <Input
+                        placeholder={t("employee__first_name", {
+                          defaultValue: "First Name",
+                        })}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -349,9 +370,16 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__last_name", { defaultValue: "Last Name" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__last_name", { defaultValue: "Last Name" })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__last_name", { defaultValue: "Last Name" })} {...field} />
+                      <Input
+                        placeholder={t("employee__last_name", {
+                          defaultValue: "Last Name",
+                        })}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -362,13 +390,19 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.phone_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__phone_number", { defaultValue: "Phone Number" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__phone_number", {
+                        defaultValue: "Phone Number",
+                      })}
+                    </FormLabel>
                     <FormControl>
                       <PhoneInput
                         {...field}
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder={t("employee__phone_number", { defaultValue: "Phone Number" })}
+                        placeholder={t("employee__phone_number", {
+                          defaultValue: "Phone Number",
+                        })}
                         maxLength={14}
                       />
                     </FormControl>
@@ -381,9 +415,17 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.prefix"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__prefix", { defaultValue: "Prefix" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__prefix", { defaultValue: "Prefix" })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__prefix", { defaultValue: "Prefix" })} {...field} maxLength={10} />
+                      <Input
+                        placeholder={t("employee__prefix", {
+                          defaultValue: "Prefix",
+                        })}
+                        {...field}
+                        maxLength={10}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -394,9 +436,17 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.suffix"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__suffix", { defaultValue: "Suffix" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__suffix", { defaultValue: "Suffix" })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__suffix", { defaultValue: "Suffix" })} {...field} maxLength={50} />
+                      <Input
+                        placeholder={t("employee__suffix", {
+                          defaultValue: "Suffix",
+                        })}
+                        {...field}
+                        maxLength={50}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -407,7 +457,9 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.user_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__user_type", { defaultValue: "User Type" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__user_type", { defaultValue: "User Type" })}
+                    </FormLabel>
                     <Select
                       {...field}
                       onValueChange={field.onChange}
@@ -415,13 +467,19 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={t("employee__select_user_type", { defaultValue: "Select User Type" })} />
+                          <SelectValue
+                            placeholder={t("employee__select_user_type", {
+                              defaultValue: "Select User Type",
+                            })}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {USER_TYPES.map((ut) => (
                           <SelectItem key={ut.value} value={ut.value}>
-                            {t(`employee__user_type_${ut.value}`, { defaultValue: ut.label })}
+                            {t(`employee__user_type_${ut.value}`, {
+                              defaultValue: ut.label,
+                            })}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -435,7 +493,9 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__gender", { defaultValue: "Gender" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__gender", { defaultValue: "Gender" })}
+                    </FormLabel>
                     <Select
                       {...field}
                       onValueChange={field.onChange}
@@ -443,13 +503,19 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={t("employee__select_gender", { defaultValue: "Select Gender" })} />
+                          <SelectValue
+                            placeholder={t("employee__select_gender", {
+                              defaultValue: "Select Gender",
+                            })}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {GENDER_TYPES.map((g) => (
                           <SelectItem key={g.id} value={g.id}>
-                            {t(`employee__gender_${g.id}`, { defaultValue: g.text })}
+                            {t(`employee__gender_${g.id}`, {
+                              defaultValue: g.text,
+                            })}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -463,9 +529,18 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.geo_organization"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__geo_organization", { defaultValue: "Geo Organization" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__geo_organization", {
+                        defaultValue: "Geo Organization",
+                      })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__geo_organization_uuid", { defaultValue: "Geo Organization UUID" })} {...field} />
+                      <Input
+                        placeholder={t("employee__geo_organization_uuid", {
+                          defaultValue: "Geo Organization UUID",
+                        })}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -478,9 +553,18 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                     name="user.username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("employee__username", { defaultValue: "Username" })}</FormLabel>
+                        <FormLabel>
+                          {t("employee__username", {
+                            defaultValue: "Username",
+                          })}
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder={t("employee__username", { defaultValue: "Username" })} {...field} />
+                          <Input
+                            placeholder={t("employee__username", {
+                              defaultValue: "Username",
+                            })}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -491,9 +575,16 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                     name="user.email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("employee__email", { defaultValue: "Email" })}</FormLabel>
+                        <FormLabel>
+                          {t("employee__email", { defaultValue: "Email" })}
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder={t("employee__email", { defaultValue: "Email" })} {...field} />
+                          <Input
+                            placeholder={t("employee__email", {
+                              defaultValue: "Email",
+                            })}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -504,7 +595,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                     name="user.password_setup_method"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("employee__password_setup_method", { defaultValue: "Password Setup Method" })}</FormLabel>
+                        <FormLabel>
+                          {t("employee__password_setup_method", {
+                            defaultValue: "Password Setup Method",
+                          })}
+                        </FormLabel>
                         <Select
                           {...field}
                           onValueChange={field.onChange}
@@ -512,12 +607,24 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("employee__select_method", { defaultValue: "Select Method" })} />
+                              <SelectValue
+                                placeholder={t("employee__select_method", {
+                                  defaultValue: "Select Method",
+                                })}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="immediate">{t("employee__set_password_now", { defaultValue: "Set Password Now" })}</SelectItem>
-                            <SelectItem value="email">{t("employee__send_email_invitation", { defaultValue: "Send Email Invitation" })}</SelectItem>
+                            <SelectItem value="immediate">
+                              {t("employee__set_password_now", {
+                                defaultValue: "Set Password Now",
+                              })}
+                            </SelectItem>
+                            <SelectItem value="email">
+                              {t("employee__send_email_invitation", {
+                                defaultValue: "Send Email Invitation",
+                              })}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -531,9 +638,20 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                         name="user.password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("employee__password", { defaultValue: "Password" })} <span className="text-red-500">*</span></FormLabel>
+                            <FormLabel>
+                              {t("employee__password", {
+                                defaultValue: "Password",
+                              })}{" "}
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
                             <FormControl>
-                              <Input type="password" placeholder={t("employee__password", { defaultValue: "Password" })} {...field} />
+                              <Input
+                                type="password"
+                                placeholder={t("employee__password", {
+                                  defaultValue: "Password",
+                                })}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -544,9 +662,19 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                         name="user.c_password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("employee__confirm_password", { defaultValue: "Confirm Password" })}</FormLabel>
+                            <FormLabel>
+                              {t("employee__confirm_password", {
+                                defaultValue: "Confirm Password",
+                              })}
+                            </FormLabel>
                             <FormControl>
-                              <Input type="password" placeholder={t("employee__confirm_password", { defaultValue: "Confirm Password" })} {...field} />
+                              <Input
+                                type="password"
+                                placeholder={t("employee__confirm_password", {
+                                  defaultValue: "Confirm Password",
+                                })}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -562,7 +690,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.date_of_birth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__date_of_birth", { defaultValue: "Date of Birth" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__date_of_birth", {
+                        defaultValue: "Date of Birth",
+                      })}
+                    </FormLabel>
                     <FormControl>
                       <DateField
                         date={
@@ -587,7 +719,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.weekly_working_hours"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__weekly_working_hours", { defaultValue: "Weekly Working Hours" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__weekly_working_hours", {
+                        defaultValue: "Weekly Working Hours",
+                      })}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -605,10 +741,31 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.skills"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__skills", { defaultValue: "Skills" })}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={t("employee__skills_placeholder", { defaultValue: "Enter comma-separated skills" })} value={field.value?.join(", ") || ""} onChange={(e) => field.onChange(e.target.value.split(",").map((s) => s.trim()))} />
-                    </FormControl>
+                    <FormLabel>
+                      {t("employee__skills", { defaultValue: "Skills" })}
+                    </FormLabel>
+                    <ReactSelect
+                      isMulti
+                      options={skillsQuery.data?.results?.map((skill: any) => ({
+                        value: skill.id,
+                        label: skill.name,
+                      }))}
+                      value={skillsQuery.data?.results
+                        ?.filter((skill: any) =>
+                          field.value?.includes(skill.id)
+                        )
+                        .map((skill: any) => ({
+                          value: skill.id,
+                          label: skill.name,
+                        }))}
+                      onChange={(selected) =>
+                        field.onChange(selected.map((item: any) => item.value))
+                      }
+                      isLoading={skillsQuery.isLoading}
+                      placeholder={t("employee__select_skills", {
+                        defaultValue: "Select Skills",
+                      })}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -619,9 +776,18 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="user.qualification"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__qualification", { defaultValue: "Qualification" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__qualification", {
+                        defaultValue: "Qualification",
+                      })}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder={t("employee__qualification", { defaultValue: "Qualification" })} {...field} />
+                      <Input
+                        placeholder={t("employee__qualification", {
+                          defaultValue: "Qualification",
+                        })}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -635,7 +801,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                   name="hire_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("employee__hire_date", { defaultValue: "Hire date" })}</FormLabel>
+                      <FormLabel>
+                        {t("employee__hire_date", {
+                          defaultValue: "Hire date",
+                        })}
+                      </FormLabel>
                       <FormControl>
                         <DateField
                           date={
@@ -661,7 +831,9 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__address", { defaultValue: "Address" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__address", { defaultValue: "Address" })}
+                    </FormLabel>
                     <FormControl>
                       <Textarea {...field} data-cy="address-input" />
                     </FormControl>
@@ -675,7 +847,9 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 name="pincode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("employee__pincode", { defaultValue: "Pincode" })}</FormLabel>
+                    <FormLabel>
+                      {t("employee__pincode", { defaultValue: "Pincode" })}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -701,7 +875,7 @@ export default function EmployeeForm(props: EmployeeFormProps) {
               <Button
                 variant="secondary"
                 type="button"
-                onClick={() => navigate("/employees")}
+                onClick={() => navigate("/hrm/employees")}
               >
                 {t("employee__cancel", { defaultValue: "Cancel" })}
               </Button>
@@ -710,7 +884,11 @@ export default function EmployeeForm(props: EmployeeFormProps) {
                 variant="primary"
                 disabled={isCreatingEmployee || isUpdatingEmployee}
               >
-                {employeeId ? t("employee__save", { defaultValue: "Save" }) : t("employee__save_continue", { defaultValue: "Save and Continue" })}
+                {employeeId
+                  ? t("employee__save", { defaultValue: "Save" })
+                  : t("employee__save_continue", {
+                      defaultValue: "Save and Continue",
+                    })}
               </Button>
             </div>
           </form>

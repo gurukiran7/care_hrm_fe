@@ -124,7 +124,7 @@ export const SkillsDetails = ({ skills }: { skills: Skill[] }) => {
         <div className="flex flex-wrap gap-2">
           {skills.map((s) => (
             <span
-              key={s.external_id}
+              key={s.id}
               className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs border border-blue-200"
               title={s.description}
             >

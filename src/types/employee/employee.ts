@@ -2,7 +2,7 @@ import type { GENDER_TYPES } from "../../common/constants";
 import type { UserType } from "../user/user";
 
 export interface Skill {
-  external_id: string;
+  id: string;
   name: string;
   description: string;
 }

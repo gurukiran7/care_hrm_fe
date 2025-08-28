@@ -1,7 +1,6 @@
 import { useRoutes } from "raviger";
 import { Dashboard } from "./pages/dashboard";
 import { Employees } from "./pages/employees";
-import { LeaveTypesSettings } from "./pages/leave-settings";
 import { AppSidebar } from "./components/ui/sidebar/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import useSidebarState from "./hooks/useSidebarState";
@@ -18,7 +17,6 @@ const routes = {
   "/employees/:id": (params: { id: string }) => (
     <EmployeeHome id={params.id} tab="profile" />
   ),
-  "/settings": (_params: {}) => <LeaveTypesSettings />,
   "/hrm/employees/create": (_params: {}) => <EmployeeForm />,
   "/": (_params: {}) => <Dashboard />,
   "/hrm/employees/:id/edit": (params: { id: string }) => (

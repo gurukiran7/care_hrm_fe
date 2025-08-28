@@ -108,6 +108,8 @@ export function Dashboard() {
                         (c - 1 + leaveBalances.length) % leaveBalances.length
                     )
                   }
+                  hasPrevLeaveType={current > 0}
+                  hasNextLeaveType={current < leaveBalances.length - 1}
                   role="employee"
                 />
 

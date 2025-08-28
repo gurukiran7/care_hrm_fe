@@ -24,6 +24,8 @@ interface LeaveRequestCardProps {
   role: "HR" | "employee" | "view";
   onAdjust?: (newBalance: number) => void;
   onBack?: () => void;
+  hasPrevLeaveType?: boolean;
+  hasNextLeaveType?: boolean;
 }
 
 export function LeaveRequest({
@@ -33,6 +35,8 @@ export function LeaveRequest({
   role,
   onAdjust,
   onBack,
+  hasPrevLeaveType,
+  hasNextLeaveType,
 }: LeaveRequestCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editBalance, setEditBalance] = useState<number>(leave.daysAvailable);
@@ -58,7 +62,7 @@ export function LeaveRequest({
   return (
     <Card className="flex flex-col justify-between h-full shadow-md border border-gray-200 rounded-lg p-0">
       <CardHeader className="flex flex-row items-center gap-3 bg-gray-50 rounded-t-lg px-6 py-4">
-        {onBack && (
+        {onBack && hasPrevLeaveType && (
           <Button
             variant="ghost"
             size="icon"
@@ -75,7 +79,7 @@ export function LeaveRequest({
         <CardTitle className="text-lg font-semibold text-primary-700 flex-1">
           {leave.title}
         </CardTitle>
-        {onNext && (
+        {onNext && hasNextLeaveType &&  (
           <Button
             variant="ghost"
             size="icon"

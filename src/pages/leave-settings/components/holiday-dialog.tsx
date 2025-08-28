@@ -7,6 +7,7 @@ import { Calendar } from "../../../components/ui/calender";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 
 const holidaySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -20,6 +21,15 @@ export function HolidayDialog({ open, onOpenChange, onSubmit, isPending, initial
     resolver: zodResolver(holidaySchema) as any,
     defaultValues: initialValues || { name: "", date: "", description: "" },
   });
+
+  useEffect(() => {
+    if (initialValues) {
+      form.reset(initialValues);
+    } else {
+      form.reset({ name: "", date: "", description: "" });
+    }
+  }, [initialValues, form]);
+  
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

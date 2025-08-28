@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 
 const leaveTypeSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -16,6 +17,13 @@ export function LeaveTypeDialog({ open, onOpenChange, onSubmit, isPending, initi
     resolver: zodResolver(leaveTypeSchema) as any,
     defaultValues: initialValues || { name: "", default_days: 0 },
   });
+  useEffect(() => {
+    if (initialValues) {
+      form.reset(initialValues);
+    } else {
+      form.reset({ name: "", default_days: 0 });
+    }
+  }, [initialValues, form]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

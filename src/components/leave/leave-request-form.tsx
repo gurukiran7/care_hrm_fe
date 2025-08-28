@@ -40,7 +40,6 @@ import {
   SelectContent,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import { t } from "i18next";
 
 type LeaveRequestFormProps = {
   open: boolean;
@@ -54,12 +53,8 @@ type LeaveRequestFormProps = {
 const leaveFormSchema = z.object({
   from: z.date(),
   to: z.date(),
-  leaveType: z
-    .string()
-    .nonempty(t("leave_request__leave_type_required", { defaultValue: "Leave type is required" })),
-  message: z
-    .string()
-    .min(1, t("leave_request__description_required", { defaultValue: "Description is required" })),
+  leaveType: z.string().nonempty("Leave type is required"),
+  message: z.string().min(1, "Description is required"),
 });
 
 type LeaveFormValues = z.infer<typeof leaveFormSchema>;
@@ -129,9 +124,7 @@ export function LeaveRequestForm({
   const { mutate: createLeaveRequest, isPending: isCreating } = useMutation({
     mutationFn: mutate(leaveRequestApi.addLeaveRequest),
     onSuccess: (data: any) => {
-      toast.success(
-        t("leave_request__submit_success", { defaultValue: "Leave request submitted successfully" })
-      );
+      toast.success("Leave request submitted successfully");
       form.reset();
       queryClient.invalidateQueries({
         queryKey: ["leaveActivities", employee?.id],
@@ -140,10 +133,7 @@ export function LeaveRequestForm({
       onClose();
     },
     onError: (error: any) => {
-      toast.error(
-        error?.message ||
-          t("leave_request__submit_failed", { defaultValue: "Failed to submit leave request" })
-      );
+      toast.error(error?.message || "Failed to submit leave request");
     },
   });
 
@@ -152,18 +142,14 @@ export function LeaveRequestForm({
       pathParams: { id: leaveRequestId || "" },
     }),
     onSuccess: (data: any) => {
-      toast.success(
-        t("leave_request__update_success", { defaultValue: "Leave request updated successfully" })
-      );
+      toast.success("Leave request updated successfully");
       form.reset();
       onSubmit?.(data);
       onClose();
     },
     onError: (error: any) => {
-      toast.error(
-        error?.message ||
-          t("leave_request__update_failed", { defaultValue: "Failed to update leave request" })
-      );
+      console.log("Mutation error:", error);
+      toast.error(error?.message || "Failed to update leave request");
     },
   });
 
@@ -190,12 +176,12 @@ export function LeaveRequestForm({
   }, [leaveBlocksQuery.data]);
 
   function isDateBlocked(date: Date) {
-    return blockedDates.some((d:Date) => isSameDay(d, date));
+    return blockedDates.some((d: Date) => isSameDay(d, date));
   }
 
   function handleSubmit(values: LeaveFormValues) {
     if (!employee?.id) {
-      toast.error(t("leave_request__employee_not_found", { defaultValue: "Employee not found" }));
+      toast.error("Employee not found");
       return;
     }
 
@@ -227,10 +213,7 @@ export function LeaveRequestForm({
   }
 
   const isPending = isCreating || isUpdating;
-  const title =
-    mode === "edit"
-      ? t("leave_request__update_title", { defaultValue: "Update Leave Request" })
-      : t("leave_request__create_title", { defaultValue: "Request Leave" });
+  const title = mode === "edit" ? "Update Leave Request" : "Request Leave";
 
   const [fromOpen, setFromOpen] = useState(false);
   const [toOpen, setToOpen] = useState(false);
@@ -251,13 +234,11 @@ export function LeaveRequestForm({
                 name="from"
                 control={form.control}
                 rules={{
-                  required: t("leave_request__from_required", { defaultValue: "From date is required" }),
+                  required: "From date is required",
                 }}
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>
-                      {t("leave_request__from_label", { defaultValue: "From" })}
-                    </FormLabel>
+                    <FormLabel>From</FormLabel>
                     <Popover open={fromOpen} onOpenChange={setFromOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -271,9 +252,7 @@ export function LeaveRequestForm({
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>
-                                {t("leave_request__pick_date", { defaultValue: "Pick a date" })}
-                              </span>
+                              <span>Pick a date</span>
                             )}
                             <CalendarHeart className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -285,18 +264,14 @@ export function LeaveRequestForm({
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
-                            setFromOpen(false); // Close after select
+                            setFromOpen(false);
                           }}
                           disabled={(date) => {
                             if (date < new Date()) return true;
-
                             if (form.watch("to") && date > form.watch("to")!)
                               return true;
-
                             if (isDateBlocked(date)) return true;
-
                             return false;
-                            
                           }}
                         />
                       </PopoverContent>
@@ -309,13 +284,11 @@ export function LeaveRequestForm({
                 name="to"
                 control={form.control}
                 rules={{
-                  required: t("leave_request__to_required", { defaultValue: "To date is required" }),
+                  required: "To date is required",
                 }}
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>
-                      {t("leave_request__to_label", { defaultValue: "To" })}
-                    </FormLabel>
+                    <FormLabel>To</FormLabel>
                     <Popover open={toOpen} onOpenChange={setToOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -329,9 +302,7 @@ export function LeaveRequestForm({
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>
-                                {t("leave_request__pick_date", { defaultValue: "Pick a date" })}
-                              </span>
+                              <span>Pick a date</span>
                             )}
                             <CalendarHeart className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -343,7 +314,7 @@ export function LeaveRequestForm({
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
-                            setToOpen(false); // Close after select
+                            setToOpen(false);
                           }}
                           disabled={(date) => {
                             if (
@@ -352,9 +323,7 @@ export function LeaveRequestForm({
                             )
                               return true;
                             if (isDateBlocked(date)) return true;
-
                             return false;
-                            
                           }}
                         />
                       </PopoverContent>
@@ -369,9 +338,7 @@ export function LeaveRequestForm({
               name="leaveType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("leave_request__leave_type_label", { defaultValue: "Leave Type" })}
-                  </FormLabel>
+                  <FormLabel>Leave Type</FormLabel>
                   <Select
                     {...field}
                     onValueChange={field.onChange}
@@ -379,17 +346,13 @@ export function LeaveRequestForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={t("leave_request__leave_type_placeholder", {
-                            defaultValue: "Select Leave Type",
-                          })}
-                        />
+                        <SelectValue placeholder="Select Leave Type" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {leaveCategories.map((opt) => (
                         <SelectItem key={opt.value} value={opt.value}>
-                          {t("leave_request__leave_type_option", { defaultValue: opt.label })}
+                          {opt.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -403,15 +366,11 @@ export function LeaveRequestForm({
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("leave_request__description_label", { defaultValue: "Description" })}
-                  </FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder={t("leave_request__description_placeholder", {
-                        defaultValue: "Enter reason for leave",
-                      })}
+                      placeholder="Enter reason for leave"
                     />
                   </FormControl>
                   <FormMessage />
@@ -422,15 +381,15 @@ export function LeaveRequestForm({
               <Button type="submit" disabled={isPending}>
                 {isPending
                   ? mode === "edit"
-                    ? t("leave_request__updating", { defaultValue: "Updating..." })
-                    : t("leave_request__submitting", { defaultValue: "Submitting..." })
+                    ? "Updating..."
+                    : "Submitting..."
                   : mode === "edit"
-                  ? t("leave_request__update", { defaultValue: "Update" })
-                  : t("leave_request__submit", { defaultValue: "Submit" })}
+                  ? "Update"
+                  : "Submit"}
               </Button>
               <DialogClose asChild>
                 <Button type="button" variant="outline">
-                  {t("leave_request__cancel", { defaultValue: "Cancel" })}
+                  Cancel
                 </Button>
               </DialogClose>
             </DialogFooter>

@@ -76,8 +76,8 @@ export function DataTable<TData, TValue>({
           filterColumn={filterColumn}
         />
       )}
-      <div className={cn("w-full", useFilter && "rounded-md border")}>
-        <Table className="w-full">
+      <div className={cn("w-full overflow-x-auto", useFilter && "rounded-md border")}>
+        <Table className="min-w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => {
               return (

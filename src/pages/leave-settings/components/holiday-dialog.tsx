@@ -78,7 +78,9 @@ export function HolidayDialog({ open, onOpenChange, onSubmit, isPending, initial
                         mode="single"
                         selected={field.value ? new Date(field.value) : undefined}
                         onSelect={(date) => {
-                          field.onChange(date?.toISOString().slice(0, 10));
+                          if (date) {
+                            field.onChange(date.toLocaleDateString("en-CA"));
+                          }
                         }}
                         disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                       />

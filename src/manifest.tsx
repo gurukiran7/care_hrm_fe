@@ -1,6 +1,7 @@
 // manifest.ts
 import { lazy } from "react";
 import { EmployeeProvider } from "./hooks/useEmployee";
+import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface NavigationLink {
@@ -26,14 +27,20 @@ const manifest: Manifest = {
     "/hrm": () => (
       <QueryClientProvider client={queryClient}>
         <EmployeeProvider>
-          <HRM />
+          <>
+            <HRM />
+            <Toaster richColors position="top-right" />
+          </>
         </EmployeeProvider>
       </QueryClientProvider>
     ),
     "/hrm/*": () => ( 
       <QueryClientProvider client={queryClient}>
         <EmployeeProvider>
-          <HRM />
+          <>
+            <HRM />
+            <Toaster richColors position="top-right" />
+          </>
         </EmployeeProvider>
       </QueryClientProvider>
     ),

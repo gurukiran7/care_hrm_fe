@@ -4,19 +4,18 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
-import { Badge } from "../../../components/ui/badge";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { useState } from "react";
 import query from "../../../Utils/request/query";
 import leaveRequestApi from "../../../types/leaveRequest/leaveRequestApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RequestDetailCard } from "./request-detail";
-import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import mutate from "../../../Utils/request/mutate";
 import { toast } from "sonner";
 import { Avatar } from "../../../components/Common/avatar";
 import useFilters from "../../../hooks/useFilters";
 import { CardListSkeleton } from "../../../components/Common/SkeletonLoading";
+import { RequestStatusBadge } from "./request-satus-badge";
 
 interface Request {
   id: string;
@@ -35,7 +34,7 @@ interface Request {
     is_active: boolean;
   };
   reason?: string;
-  status: string;
+  status: "approved" | "rejected" | "cancellation_requested" | "pending";
 }
 
 export function RequestsList() {
@@ -165,45 +164,6 @@ export function RequestsList() {
                 ? new Date(req.requested_at).toLocaleString()
                 : "";
 
-              let statusBadge = null;
-              if (req.status === "approved") {
-                statusBadge = (
-                  <Badge
-                    variant="green"
-                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
-                  >
-                    <CheckCircle2 className="w-3 h-3" /> Approved
-                  </Badge>
-                );
-              } else if (req.status === "rejected") {
-                statusBadge = (
-                  <Badge
-                    variant="danger"
-                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
-                  >
-                    <XCircle className="w-3 h-3" /> Rejected
-                  </Badge>
-                );
-              } else if (req.status === "cancellation_requested") {
-                statusBadge = (
-                  <Badge
-                    variant="yellow"
-                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
-                  >
-                    <Clock className="w-3 h-3" /> Cancellation Requested
-                  </Badge>
-                );
-              } else if (req.status === "pending") {
-                statusBadge = (
-                  <Badge
-                    variant="secondary"
-                    className="font-medium flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap"
-                  >
-                    Pending
-                  </Badge>
-                );
-              }
-
               return (
                 <div
                   key={req.id}
@@ -231,7 +191,7 @@ export function RequestsList() {
                     </span>
                   </div>
 
-                  <div className="ml-2 flex-shrink-0">{statusBadge}</div>
+                  <div className="ml-2 flex-shrink-0"><RequestStatusBadge status={req.status} /></div>
                 </div>
               );
             })}

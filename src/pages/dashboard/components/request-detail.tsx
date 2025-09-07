@@ -6,12 +6,12 @@ import {
   CardTitle,
 } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { MessageCircleMore, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { MessageCircleMore } from "lucide-react";
 import { Avatar } from "../../../components/Common/avatar";
 import { navigate } from "raviger";
 import { useTranslation } from "react-i18next";
+import { RequestStatusBadge } from "./request-satus-badge";
 
 export function RequestDetailCard({
   request,
@@ -33,36 +33,11 @@ export function RequestDetailCard({
     : "";
 
   const { t } = useTranslation();
-  let statusBadge = null;
-  if (request.status === "approved") {
-    statusBadge = (
-      <Badge variant="green" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <CheckCircle2 className="w-4 h-4" /> {t("leave_request__approved", { defaultValue: "Approved" })}
-      </Badge>
-    );
-  } else if (request.status === "rejected") {
-    statusBadge = (
-      <Badge variant="danger" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <XCircle className="w-4 h-4" /> {t("leave_request__rejected", { defaultValue: "Rejected" })}
-      </Badge>
-    );
-  } else if (request.status === "cancellation_requested") {
-    statusBadge = (
-      <Badge variant="yellow" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        <Clock className="w-4 h-4" /> {t("leave_request__cancellation_requested", { defaultValue: "Cancellation Requested" })}
-      </Badge>
-    );
-  } else if (request.status === "pending") {
-    statusBadge = (
-      <Badge variant="secondary" className="font-semibold flex items-center gap-1 px-2 py-1 whitespace-nowrap">
-        {t("leave_request__pending", { defaultValue: "Pending" })}
-      </Badge>
-    );
-  }
+
 
   return (
     <Card className="flex flex-col shadow-lg border border-gray-200 rounded-xl w-full max-w-3xl ">
-      <CardHeader className="bg-gray-50 flex flex-row items-center justify-between px-4 sm:px-6 py-4 rounded-t-xl border-b">
+      <CardHeader className="bg-gray-50 flex flex-row items-center justify-between px-2 sm:px-6 py-4 rounded-t-xl border-b">
         <div className="flex items-center gap-3">
           <Button
             onClick={onClose}
@@ -71,19 +46,19 @@ export function RequestDetailCard({
             className="rounded-full"
             aria-label="Back"
           >
-            <ArrowLeftIcon className="w-5 h-5" />
+            <ArrowLeftIcon className="md:w-5 md:h-5 w-3 h-3" />
           </Button>
           <div>
-            <CardTitle className="text-lg font-semibold text-primary-700">
+            <CardTitle className="text-lg font-semibold text-primary-700 truncate max-w-[160px] sm:max-w-none">
               {t("leave_request__details_title", { defaultValue: "Leave Request Details" })}
             </CardTitle>
-            <CardDescription className="text-xs text-gray-500">
+            <CardDescription className="text-xs text-gray-500 truncate max-w-[180px] sm:max-w-none">
               {request.employee_name || "Unknown"} &middot; {createdAt}
             </CardDescription>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {statusBadge}
+          <RequestStatusBadge status={request.status} />
         </div>
       </CardHeader>
       <CardContent className="p-5 space-y-6">

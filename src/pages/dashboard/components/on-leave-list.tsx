@@ -10,6 +10,7 @@ import {
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { Avatar } from "../../../components/Common/avatar";
 import { CardListSkeleton } from "../../../components/Common/SkeletonLoading";
+import { navigate } from "raviger";
 
 interface OnLeaveItem {
   name: string;
@@ -17,6 +18,7 @@ interface OnLeaveItem {
   date: string;
   rangeStart: string;
   endDate?: string;
+  employeeId:string;
 }
 
 function getDayLabel(dateStr: string) {
@@ -73,6 +75,7 @@ export function OnLeaveList() {
           date: effectiveStart,     
           rangeStart: leave.start_date, 
           endDate: leave.end_date,
+          employeeId: leave.employee,
         };
       }),
     
@@ -121,13 +124,14 @@ export function OnLeaveList() {
                       <div
                         key={l.name + l.date}
                         className="flex items-center gap-3 mt-2 bg-white rounded-lg px-3 py-2 border hover:shadow transition"
+                         onClick={() => navigate(`/hrm/employees/${l.employeeId}`)}
                       >
                         <Avatar
                           className="size-8 font-medium text-secondary-800 shadow flex-shrink-0"
                           name={l.name}
                         />
                         <span className="font-medium text-primary-800 truncate">{l.name}</span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 whitespace-nowrap">
                         Leave {formatLeaveRange(l.rangeStart, l.endDate)}
                         </span>
                       </div>

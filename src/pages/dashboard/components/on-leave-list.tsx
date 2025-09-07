@@ -123,8 +123,8 @@ export function OnLeaveList() {
                     grouped[day].map((l) => (
                       <div
                         key={l.name + l.date}
-                        className="flex items-center gap-3 mt-2 bg-white rounded-lg px-3 py-2 border hover:shadow transition"
-                         onClick={() => navigate(`/hrm/employees/${l.employeeId}`)}
+                        className="flex items-center gap-3 mt-2 bg-white rounded-lg px-3 py-2 border hover:shadow transition cursor-pointer"
+                         onClick={() => navigate(`/hrm/employees/${l.employeeId}/leaves`)}
                       >
                         <Avatar
                           className="size-8 font-medium text-secondary-800 shadow flex-shrink-0"
